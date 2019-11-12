@@ -56,6 +56,8 @@ class Truck extends CI_Controller {
 			unset($data['trapddescription']);
 			unset($data['trapdcontact']);
 			$this->TruckModel->add_data($data);
+			$this->session->set_flashdata('datasaved',1);
+
                 redirect(base_url() . 'truck');
 		}
 	 else
@@ -87,6 +89,11 @@ class Truck extends CI_Controller {
             redirect(base_url(). 'truck');
     }
 	//End delete data
+	public function checktruck(){
+		$tname = $this->input->post('tname');
+		$data = $this->TruckModel->checktruck($tname);
+		echo $data;
+	}
 }
 
 ?>

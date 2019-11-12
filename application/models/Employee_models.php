@@ -10,7 +10,7 @@ class Employee_models extends CI_Model
     }
 
     public function selectEmployee(){
-        $data = $this->db->query('select * from employee where empid<>0');
+        $data = $this->db->query('SELECT employee.* ,IFNULL( SUM(emp_advance.adadvance),0) as total_advance FROM employee LEFT JOIN emp_advance ON employee.empid=emp_advance.adempid WHERE employee.empid<>0 GROUP BY employee.empid');
         return $data->result();
     }
 
@@ -67,9 +67,14 @@ class Employee_models extends CI_Model
     }
 
     public function get_all_salary_of_one_employee($salempid){
-        $this->db->where(array('salempid'=>$salempid));
-        $data = $this->db->get('salary');
+        // $this->db->where(array('salempid'=>$salempid, 'saltotalsalary'>0));
+        $data = $this->db->query('select * from salary where salempid='.$salempid.' and saltotalsalary>0 ');
         return $data->result();
+    }
+    
+     public function get_only_advanceinstallment_employee($salempid){
+        $data = $this->db->query('select sum(salary.saladvanceinstallment) as totaladvanceinstallment from salary where salempid='.$salempid.' and saltotalsalary<1 ');
+        return $data->row('totaladvanceinstallment');
     }
 
 
@@ -118,27 +123,79 @@ class Employee_models extends CI_Model
         return $data->result();
     }
 
-    public function addofficeexpence($oethings, $oeamount, $oedate, $oemonth, $oedetail){
+    public function addofficeexpence($oethings, $oeamount, $oedate, $oemonth, $oedetail,$oetype, $oetaken){
         $this->db->where(array('omnname'=>$oethings));
         $data = $this->db->get('othermaterialname');
         if($data->num_rows()<1){
             
             $this->db->insert('othermaterialname', array('omnname'=>$oethings));
-            $this->db->insert('officeexpence', array('oethings'=>$oethings, 'oeamount'=> $oeamount, 'oedate'=>$oedate, 'oemonth'=>$oemonth, 'oedetail'=>$oedetail));
+            $this->db->insert('officeexpence', array('oethings'=>$oethings, 'oeamount'=> $oeamount, 'oedate'=>$oedate, 'oemonth'=>$oemonth, 'oedetail'=>$oedetail, 'oetype'=>$oetype,'oetaken'=>$oetaken));
         }else{
-            $this->db->insert('officeexpence', array('oethings'=>$oethings, 'oeamount'=> $oeamount, 'oedate'=>$oedate, 'oemonth'=>$oemonth, 'oedetail'=>$oedetail));
+            $this->db->insert('officeexpence', array('oethings'=>$oethings, 'oeamount'=> $oeamount, 'oedate'=>$oedate, 'oemonth'=>$oemonth, 'oedetail'=>$oedetail, 'oetype'=>$oetype, 'oetaken'=>$oetaken));
         }
         
     }
 
-    public function get_office_expence($oemonth=''){
+    public function get_office_expence($oemonth='',$oetype=0){
         $oemonth = date('F');
-        $data = $this->db->query('select * from officeexpence where oemonth="'.$oemonth.'"');
+        $data = $this->db->query('select * from officeexpence where oemonth="'.$oemonth.'" and oetype=0 and oetaken=0');
+        return $data->result();
+    }
+    public function get_office_income($oemonth='',$oetype=1){
+        $oemonth = date('F');
+        $data = $this->db->query('select * from officeexpence where oemonth="'.$oemonth.'" and oetype=1 and oetaken=0 ');
         return $data->result();
     }
     public function get_office_expence_by_search($startdate, $enddate){
-        $oemonth = date('F');
-        $data = $this->db->query('select * from officeexpence where oedate between "'.$startdate.'" and "'.$enddate.'"');
+       
+		if($startdate=='' && $enddate==''){
+            $data = $this->db->query('select * from officeexpence where oetype=0');
+		}else if($startdate=='' && $enddate!=''){
+            $oemonth = date('F', strtotime($enddate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=0 and oetaken=0');
+		}else if($startdate!='' && $enddate==''){
+            $oemonth = date('F', strtotime($startdate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=0 and oetaken=0');
+		}else if($startdate!='' && $enddate==''){
+            $oemonth = date('F', strtotime($startdate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=0 and oetaken=0');
+		}else if($startdate=='' && $enddate!=''){
+            $oemonth = date('F', strtotime($enddate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=0 and oetaken=0');
+        
+		}else{
+			$data = $this->db->query('select * from officeexpence where oedate between "'.$startdate.'" and "'.$enddate.'" and oetype=0 and oetaken=0');
+        
+        }
+        
+        // $data = $this->db->query('select * from officeexpence where oedate between "'.$startdate.'" and "'.$enddate.'" and oetype='.$oetype.'');
+        return $data->result();
+    }
+
+    
+    public function get_office_income_by_search($startdate, $enddate){
+       
+		if($startdate=='' && $enddate==''){
+            $data = $this->db->query('select * from officeexpence where oetype=1');
+		}else if($startdate=='' && $enddate!=''){
+            $oemonth = date('F', strtotime($enddate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=1 and oetaken=0');
+		}else if($startdate!='' && $enddate==''){
+            $oemonth = date('F', strtotime($startdate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=1 and oetaken=0');
+		}else if($startdate!='' && $enddate==''){
+            $oemonth = date('F', strtotime($startdate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=1 and oetaken=0');
+		}else if($startdate=='' && $enddate!=''){
+            $oemonth = date('F', strtotime($enddate));
+			$data = $this->db->query('select * from officeexpence where  oemonth="'.$oemonth.'" and oetype=1 and oetaken=0');
+        
+		}else{
+			$data = $this->db->query('select * from officeexpence where oedate between "'.$startdate.'" and "'.$enddate.'" and oetype=1 and oetaken=0');
+        
+        }
+        
+        // $data = $this->db->query('select * from officeexpence where oedate between "'.$startdate.'" and "'.$enddate.'" and oetype='.$oetype.'');
         return $data->result();
     }
 }

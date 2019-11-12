@@ -1,1 +1,5 @@
 [23-Oct-2019 10:59:21 America/New_York] PHP Parse error:  syntax error, unexpected ',' in /home/intelexcel/asf.intelexcel.com/application/views/layout/header.php on line 158
+[29-Oct-2019 22:04:49 America/New_York] PHP Fatal error:  require_once(): Failed opening required '/home/intelexcel/asf.intelexcel.com/application/models/base_model.php' (include_path='.:/opt/alt/php56/usr/share/pear:/opt/alt/php56/usr/share/php') in /home/intelexcel/asf.intelexcel.com/application/models/DriverModel.php on line 5
+[05-Nov-2019 06:47:41 America/New_York] PHP Parse error:  syntax error, unexpected ';' in /home/intelexcel/asf.intelexcel.com/application/views/pendingClosed.php on line 199
+[08-Nov-2019 17:01:35 America/New_York] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR), expecting ')' in /home/intelexcel/asf.intelexcel.com/application/models/base_model.php on line 44
+[09-Nov-2019 01:57:07 America/New_York] PHP Fatal error:  Call to a member function get_station() on null in /home/intelexcel/asf.intelexcel.com/application/controllers/Localtrip.php on line 10

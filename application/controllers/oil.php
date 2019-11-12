@@ -7,12 +7,10 @@ class Oil extends CI_Controller {
 
 	public function index()
 	{
-		$row =$this->OilModel->fetch_data();
-		$result =$this->ShopModel->fetch_data();
+		$row =$this->OilModel->shop_remaining_oil();
 		 $data=array(
 		 	'oil_data'=>$row,
-		 	'shop'=>$result,
-            'main_content'=>'oil'
+            'main_content'=>'Oil'
         );
         $this->load->view('default' , $data);
 	}
@@ -42,7 +40,7 @@ class Oil extends CI_Controller {
 			$data = $this->input->post();
 			unset($data['addoil']);
 			$this->OilModel->add_data($data);
-                redirect(base_url() . 'oil');
+                redirect(base_url() . 'Oil');
 		}
 	 else
         {
@@ -70,9 +68,31 @@ class Oil extends CI_Controller {
 
             $result = $this->OilModel->delete_data(array('toid'=>$id));
             // print_r($result);die;
-            redirect(base_url(). 'oil');
+            redirect(base_url(). 'Oil');
     }
 	//End delete data
+
+	public function get_single_detail()
+	{
+		$id = $this->input->Post('id');
+		$data = $this->OilModel->get_single($id);
+		$tr = '';
+
+		foreach ($data as $key => $value) {
+			$tr .='
+
+								<tr>
+                                  <td>'.$value->tsname.'</td>
+                                  <td>'.$value->toquantity.'</td>
+                                  <td>'.$value->tototalprice.'</td>
+                                  <td>'.$value->topaid.'</td>
+                                  <td>'.$value->toremaining.'</td>
+                                  <td>'.$value->crnt_date.'</td>
+                                </tr>
+			';
+		}
+		echo $tr;
+	}
 }
 
 ?>

@@ -14,7 +14,7 @@ class TripModel extends base_model
 
     public function get_daily_trip($id)
     {
-      $data = $this->db->query("select tdailytrip.tid , tdailytrip.tcid , tdailytrip.tddehari , tstation.tstname , tdailytrip.tdvfrieght , sum(tdailytrip.tdweight+tothermaterial.tomweight) as totalweight , tdailytrip.tdweight , tcity.tcname FROM tdailytrip LEFT JOIN tcity on tdailytrip.tcid = tcity.tcid LEFT JOIN ttruck on tdailytrip.tid = ttruck.tid LEFT JOIN tothermaterial on tdailytrip.tid = tothermaterial.tid LEFT JOIN tstation ON tdailytrip.tstid = tstation.tstid where tdailytrip.tid =".$id);
+      $data = $this->db->query("select tdailytrip.tid , tdailytrip.tcid , tdailytrip.tddehari , tstation.tstname, tstation.tstid , tdailytrip.tdvfrieght , sum(tdailytrip.tdweight+tothermaterial.tomweight) as totalweight , tdailytrip.tdweight , tcity.tcname FROM tdailytrip LEFT JOIN tcity on tdailytrip.tcid = tcity.tcid LEFT JOIN ttruck on tdailytrip.tid = ttruck.tid LEFT JOIN tothermaterial on tdailytrip.tid = tothermaterial.tid LEFT JOIN tstation ON tdailytrip.tstid = tstation.tstid where tdailytrip.tid =".$id);
           return $data->row();
     }
 
@@ -26,8 +26,14 @@ class TripModel extends base_model
     
     public function add_pumpdetail($a, $b, $c , $d  , $f)
     {
-        $data = array('tid' => $a, 'tpid'=>$b , 'tpdliter'=>$c , 'tpdamount'=>$d  , 'tpdpaymentstatus'=>$f);
+        $data = array('tid' => $a, 'tpid'=>$b , 'tpdliter'=>$c , 'tpdamount'=>$d  , 'tpdpaidamount'=>$f);
         return $this->db->insert('tpumpdetail',$data);
+    }
+
+    public function add_remainvoucher($a, $b, $c , $d  , $f, $g, $h)
+    {
+        $data = array('trapdtypeid' => $a, 'trapdname'=>$b , 'trapdcontact'=>$c , 'trapdamount'=>$d  , 'trapdformid'=>$f , 'trapddate' =>$g , 'trapddescription'=>$h);
+        return $this->db->insert('tremainingamountpersondetail',$data);
     }
 
     public function trip_index()

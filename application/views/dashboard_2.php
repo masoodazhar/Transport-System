@@ -188,28 +188,33 @@ $("#resizable").resizable({
                           </div>
                         </div>
                         <!-- truck and station detail need update -->
-                       <!-- <div class="row">
-                          <div class="col-md-12">
-                            <div id="resizable" style="height: 370px;border:1px solid gray;">
-                              <div id="chartContainer1" style="height: 100%; width: 100%;"></div>
+                          <!-- <div class="row">
+                            <div class="col-md-12">
+                              <div id="resizable" style="height: 370px;border:1px solid gray;">
+                                <div id="chartContainer1" style="height: 100%; width: 100%;"></div>
+                              </div>
                             </div>
+                       </div> -->
+                       <!-- <div class="row my-4 py-4" style="background:white; text-align:center;">
+                          <div class="col-md-12 ">
+                              <h2>Truck and Station Details For Recieveable amount</h2>
                           </div>
                        </div> -->
-                       <div class="row my-4 py-4" style="background:white; text-align:center;">
-                          <div class="col-md-12 ">
-                              <h2>Truck and Station Details</h2>
-                          </div>
-                       </div>
+
                        <div class="row my-4 py-4" style="background:white;">
                           <div class="col-md-12">
+                          <h4>Truck and Station Details For Receivable amount</h4>
                             <table class="table" id="datatables">
                              <thead>
                               <tr>
                                 <th>S. No</th>
-                                <th>Truck Number</th>
-                                <th>Station Trips</th>
+                                
                                 <th>Station Name</th>
-                                <th>Remaining Price</th>
+                                <th>Total Truck</th>
+                                <th>Total Trips</th>
+                                <th>Total Receivable Amount</th>
+                                <th>Paid Amount</th>
+                                <th>Still Receivable Amount</th>
                                 <th>Action</th>
                                 
                               </tr>
@@ -217,22 +222,25 @@ $("#resizable").resizable({
                               <tbody>
                               <?php
                               $id = 1;
-                              foreach($totaltrip as $key){
+                              foreach($get_station as $key){
 
                               ?>
                               <tr>
                                 <td><?=$id?></td>
-                                <td><?=$key->tnumber;?></td>
-                                <td><?=$key->numberofstation;?></td>
                                 <td><?=$key->tstname;?></td>
-                                <td><?=$key->total;?></td>
+                                <td><?=$this->main_model->get_total_trip_and_truck($key->tstid)->totaltruck?></td>
+                                <td><?=$this->main_model->get_total_trip_and_truck($key->tstid)->totaltrip?></td>
+                                <td><?=$this->ClosedModel->get_all_remaining_from_all_table_on_station_id($key->tstid)?></td>
+                                <td><?=$this->ClosedModel->get_sumof_all_table_closed_amount_by_personid($key->tstid)?></td>
+                                <td><?=$this->ClosedModel->get_all_remaining_from_all_table_on_station_id($key->tstid)-$this->ClosedModel->get_sumof_all_table_closed_amount_by_personid($key->tstid)?></td>
+                                
                                 <td class="td-actions text-right">
-                            <a href="<?php echo base_url()?>main/totalstationcountview" rel="tooltip" class="btn btn-success">
-                              <i class="material-icons">remove_red_eye</i>
+                            <a href="<?php echo base_url()?>close/add_close/<?=$key->tstid?>" rel="tooltip" class="btn btn-success">
+                              <i class="material-icons">remove_red_eye</i> View | Close
                             </a> 
-                            <a href="#" rel="tooltip" class="btn btn-danger">
-                              <i class="material-icons">delete</i>
-                            </a>
+                            <!--<a href="#" rel="tooltip" class="btn btn-danger">-->
+                            <!--  <i class="material-icons">delete</i>-->
+                            <!--</a>-->
                           </td>
                               </tr>
 
@@ -245,26 +253,84 @@ $("#resizable").resizable({
                           </div>
                        </div>
 
+
+
+
+
+                       <div class="row my-4 py-4" style="background:white;">
+                          <div class="col-md-12">
+                          <h4>Truck and Station Details For Payable amount</h4>
+                            <table class="table" id="datatables1">
+                             <thead>
+                              <tr>
+                                <th>S. No</th>
+                                
+                                <th>Station Name</th>
+                                <th>Total Truck</th>
+                                <th>Total Trips</th>
+                                <th>Total Payble Amount</th>
+                                <th>Paid Amount</th>
+                                <th>Still Payable Amount</th>
+                                <th>Action</th>
+                                
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <?php
+                              $id = 1;
+                              foreach($get_station as $key){
+
+                              ?>
+                              <tr>
+                                <td><?=$id?></td>
+                                <td><?=$key->tstname;?></td>
+                                <td><?=$this->main_model->get_total_trip_and_truck_payable($key->tstid)->totaltruck?></td>
+                                <td><?=$this->main_model->get_total_trip_and_truck_payable($key->tstid)->totaltrip?></td>
+                                <td><?=abs($this->ClosedModel->get_all_payable_from_all_table_on_station_id($key->tstid))?></td>
+                                <td><?=$this->ClosedModel->get_sumof_all_table_closed_amount_by_personid_payable($key->tstid)?></td>
+                                <td><?=abs($this->ClosedModel->get_all_payable_from_all_table_on_station_id($key->tstid)+$this->ClosedModel->get_sumof_all_table_closed_amount_by_personid_payable($key->tstid))?></td>
+                                
+                                <td class="td-actions text-right">
+                            <a href="<?php echo base_url()?>pendingClosed/add_close/<?=$key->tstid?>" rel="tooltip" class="btn btn-success">
+                              <i class="material-icons">remove_red_eye</i> View | Close
+                            </a> 
+                            <!--<a href="#" rel="tooltip" class="btn btn-danger">-->
+                            <!--  <i class="material-icons">delete</i>-->
+                            <!--</a>-->
+                          </td>
+                              </tr>
+
+                              <?php
+                              $id++;
+                              }
+                              ?>
+                              </tbody>
+                            </table>
+                          </div>
+                       </div>
+
+
+
                        <div class="row w-100">
                           <div class="col-md-4">
                               <div class="card border-info mx-sm-1 p-3">
                                   <div class="card border-info shadow text-info p-3 my-card" ><span class="fa fa-money" aria-hidden="true"></span></div>
-                                  <div class="text-info text-center mt-3"><h4>Recieveable Amount</h4></div>
-                                  <div class="text-info text-center mt-2"><h2>Rs. <?=$totalremaining; ?></h2><a href="<?php echo  base_url()?>main/remainingreport/">Check Recieveable amount details </a></div>
+                                  <div class="text-info text-center mt-3"><h4>Receivable Amount</h4></div>
+                                  <div class="text-info text-center mt-2"><h2>Rs. <?=$totalremaining-$get_sumof_closed_amount; ?></h2><a href="<?php echo  base_url()?>close/add_close/">Check Receivable amount </a> | <a href="<?php echo  base_url()?>main/remainingreport/">Truck Receivable amount  </a></div>
                               </div>
                           </div>
                           <div class="col-md-4">
                               <div class="card border-success mx-sm-1 p-3">
                                   <div class="card border-success shadow text-success p-3 my-card"><span class="fa fa-money" aria-hidden="true"></span></div>
                                   <div class="text-success text-center mt-3"><h4>Payable Amount</h4></div>
-                                  <div class="text-success text-center mt-2"><h2>Rs. <?= abs($totalpending); ?></h2><a href="<?php echo base_url()?>main/payablereport/">Check Payable amount details </a></div>
+                                  <div class="text-success text-center mt-2"><h2>Rs. <?= abs($totalpending+$get_sumof_all_table_closed_amount_payable); ?></h2><a href="<?php echo base_url()?>pendingClosed/add_close/">Check Payable amount </a> | <a href="<?php echo  base_url()?>main/payablereport/">Truck Payable amount  </a></div>
                               </div>
                           </div>
                           <div class="col-md-4">
                               <div class="card border-success mx-sm-1 p-3">
                                   <div class="card border-success shadow text-success p-3 my-card"><span class="fa fa-calendar" aria-hidden="true"></span></div>
                                   <div class="text-success text-center mt-3"><h4>Have Haji Jani</h4></div>
-                                  <div class="text-success text-center mt-2"><h2>Rs. <?=$sum_of_have_haji_jani;?></h2><a href="<?php echo base_url()?>main/hajijani/">Check Payable amount details </a></div>
+                                  <div class="text-success text-center mt-2"><h2>Rs. <?=$sum_of_have_haji_jani;?></h2><a href="<?php echo base_url()?>main/hajijani/">Check Amount Details </a></div>
                               </div>
                           </div>
                           
@@ -316,4 +382,5 @@ $("#resizable").resizable({
                   </div>
                   
            
-              
+              <!-- Button trigger modal -->
+             

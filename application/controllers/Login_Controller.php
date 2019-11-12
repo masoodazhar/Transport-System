@@ -17,7 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     function index($data=''){
 
           
-            $this->load->view('login',$data);
+            $this->load->view('Login',$data);
            
 
     }
@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $this->session->set_userdata('employee_name',$data->empname);                    
                     $this->session->set_userdata('employee_image',$data->empimage);
 
-                    redirect('main');
+                    redirect('Main');
 
                 }else{
 
@@ -89,7 +89,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		{
         $tlauth = json_encode($tlauth);
             $this->Login_Model->addCreateuser($tlusername, $tlpassword,$tlauth,$tlempid);
-        
+            $this->session->set_flashdata('datasaved',1);
             $this->createUser();
         }else{
             $this->createUser();
@@ -108,6 +108,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
        
         $this->Login_Model->updatelogin($tlusername,$tlauth, $tlid,$tlpassword);
+        $this->session->set_flashdata('datasaved',1);
         redirect('Login_Controller/createUser');
     }
 

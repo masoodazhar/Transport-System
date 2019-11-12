@@ -20,7 +20,7 @@ class Employee extends CI_Controller {
 		$this->load->view('employee', $data);
 		$this->load->view('layout/footer');
 	}
-		
+
 	public function addemployee(){
 		$empname = $this->input->post('empname');
 		$empcontact = $this->input->post('empcontact');
@@ -35,7 +35,7 @@ class Employee extends CI_Controller {
 		$config['max_width'] = '1024';
 		$config['max_height'] = '768';
 		$this->load->library('upload', $config);
-		
+
 		//===================Image validation and path=================
 			$this->form_validation->set_rules('empname' , 'Employee name' , 'required|alpha_numeric_spaces');
 			$this->form_validation->set_rules('empcontact' , 'Employee Contact' , 'required|alpha_numeric_spaces');
@@ -45,28 +45,20 @@ class Employee extends CI_Controller {
 
 		if($this->form_validation->run())
 		{
-			$this->upload->do_upload('empimage');
-			
+				$this->upload->do_upload('empimage');
 				$empimage = $this->upload->data('file_name');
-				
 				$this->Employee_models->addemployee($empname,$empcontact, $empdateofjoin, $emptype, $empsalary, $empimage);
 				$data['employees'] = $this->Employee_models->selectEmployee();
-				// $this->load->view('layout/header');
-				// $this->load->view('employee', $data);
-				// $this->load->view('layout/footer');
+				$this->session->set_flashdata('datasaved',1);
 				redirect('Employee');
 
-			
-			
-			
 		}else{
-			
 			$data['employees'] = $this->Employee_models->selectEmployee();
 			$this->load->view('layout/header');
 			$this->load->view('employee', $data);
 			$this->load->view('layout/footer');
 		}
-		
+
 
 	}
 
@@ -88,7 +80,7 @@ class Employee extends CI_Controller {
 	}
 
 	public function uploadImage(){
-		
+
 
 		$config['upload_path'] = './uploads/';
 		$config['allowed_types'] = 'gif|jpg|png';
@@ -107,12 +99,12 @@ class Employee extends CI_Controller {
 			 echo $this->upload->display_errors();
 		}
 		// echo $column;
-		
+
 
 	}
 
 	public function addsalary(){
-		
+
 		$salempid = $this->input->post('salempid');
 		$saladvanceinstallment = $this->input->post('saladvanceinstallment');
 		$saldate = $this->input->post('saldate');
@@ -127,6 +119,7 @@ class Employee extends CI_Controller {
 		if($this->form_validation->run())
 		{
 			$this->Employee_models->addsalary($salempid, $saladvanceinstallment, $saldate, $saltotalsalary, $salbonus, $saleidi, $saldetail);
+			$this->session->set_flashdata('datasaved',1);
 			$this->salary($salempid);
 		}else{
 			$this->salary($salempid);
@@ -134,19 +127,23 @@ class Employee extends CI_Controller {
 	}else{
 		redirect('Employee');
 	}
-		
+
 
 	}
 
 
 	public function salary($empid){
-	
+
 		$data['emplyee_data'] = $this->Employee_models->getEmployeeData($empid);
 		/* IF EMPLOYEE IS AVAILABLE THEN. OTHER WISE GO TO ELSE PART*/
-		if($data['emplyee_data']->empid>0){   
+		if($data['emplyee_data']->empid>0){
+
+        $data['get_only_advanceinstallment_employee'] = $this->Employee_models->get_only_advanceinstallment_employee($empid);
 
 		$data['employeea_dvance_data'] = $this->Employee_models->getEmployeeAdvanceData($empid);
+
 		$data['get_all_salary_of_one_employee'] = $this->Employee_models->get_all_salary_of_one_employee($empid);
+
 
 		// echo  '<pre>';
 		// print_r($employeea_dvance_data);
@@ -170,7 +167,7 @@ class Employee extends CI_Controller {
 		}else{
 			$data['advanceinstallmentpermonth'] = 0;
 		}
-		
+
 
 
 		$this->load->view('layout/header');
@@ -192,7 +189,7 @@ class Employee extends CI_Controller {
 		$addetail = $this->input->post('addetail');
 		$submitadvance = $this->input->post('submitadvance');
 		$addate = $this->input->post('addate');
-		
+
 		if(isset($submitadvance)){
 
 				$this->form_validation->set_rules('adadvance' , 'Advance Amount' , 'required|alpha_numeric_spaces');
@@ -201,32 +198,53 @@ class Employee extends CI_Controller {
 				$this->form_validation->set_rules('addate' , 'Payment Date' , 'required');
 				if($this->form_validation->run())
 				{
-			
+
 				$this->Employee_models->addadvance($empid, $adadvance, $adpaymentmethod, $adinstallment, $addetail, $addate);
 				// $data['modelsinvalid'] = false;
+				$this->session->set_flashdata('datasaved',1);
 				$this->index(false);
 				}
 				else
 				{
 					// $data['modelsinvalid'] = true;
 					$this->index(true);
-				
+
 				}
 		}else{
 			$this->index(false);
 		}
-		
+
 	}
 
 
 
-	public function advancedetails($empid){
-
+	public function advancedetails(){
+			$tr = '';
+			$paymentmethod = '';
+			$empid = $this->input->post('id');
 			$data['employeea_dvance_data'] = $this->Employee_models->getEmployeeAdvanceData($empid);
 
-			$this->load->view('layout/header');
-			$this->load->view('advance_details', $data);
-			$this->load->view('layout/footer');
+			foreach ($data['employeea_dvance_data']  as $key => $value) {
+
+				if($value->adpaymentmethod==1){
+					$paymentmethod = 'Monthly';
+				}else if($value->adpaymentmethod==2){
+					$paymentmethod =	'Fortnight';
+				}else{
+					$paymentmethod =	'Weekly';
+				}
+				$tr .='<tr>
+                          <td>'.$value->adadvance.'</td>
+                          <td>'.$paymentmethod.'</td>
+                          <td>'.$value->adinstallment.'</td>
+                          <td>'.$value->addate.'</td>
+                        </tr>';
+			}
+
+			// $this->session->set_flashdata('employeea_dvance_data',$tr);
+			// echo $tr;
+			// print_r($data['employeea_dvance_data'] );
+
 	}
 
 	public function active_deactive_employee(){
@@ -237,22 +255,25 @@ class Employee extends CI_Controller {
 
 
 	public function addofficeexpence(){
-		
+
 		$oethings = $this->input->post('oethings');
 		$oeamount = $this->input->post('oeamount');
 		$oedate = $this->input->post('oedate');
+		$oetype = $this->input->post('oetype');
 		$oedetail = $this->input->post('oedetail');
+		$oetaken = $this->input->post('oetaken');
 		$oemonth = date('F', strtotime($oedate));
 		$this->form_validation->set_rules('oethings' , 'Description' , 'required');
 		$this->form_validation->set_rules('oeamount' , 'Amount' , 'required');
 		$this->form_validation->set_rules('oedate' , 'Date' , 'required');
+		$this->form_validation->set_rules('oetype' , 'Type' , 'required');
 		if(isset($oethings))
 		{
 				if($this->form_validation->run())
 				{
-					$this->Employee_models->addofficeexpence($oethings, $oeamount, $oedate, $oemonth, $oedetail);
+					$this->Employee_models->addofficeexpence($oethings, $oeamount, $oedate, $oemonth, $oedetail,$oetype,$oetaken);
 					$this->officexpence();
-					
+
 				}else{
 					$this->officexpence();
 				}
@@ -260,21 +281,42 @@ class Employee extends CI_Controller {
 		else{
 			redirect('Employee/officexpence');
 		}
-		
+
 	}
 
 	public function searchOfficeExpence(){
 
 		$startdate = $this->input->get('startdate');
 		$enddate = $this->input->get('enddate');
+		// $oetype = $this->input->get('oetype');
+
+
+
 
 		$data['allofficeexpencethings'] = $this->Employee_models->all_office_expence_things();
 		$data['get_all_office_expence'] = $this->Employee_models->get_office_expence_by_search($startdate,$enddate);
+		$data['get_all_office_income'] = $this->Employee_models->get_office_income_by_search($startdate,$enddate);
+		$data['month'] = '';
 
-		$data['month'] = date('F' ,strtotime($startdate)).' TO '. date('F' ,strtotime($enddate));
-		
+		if($startdate=="" && $enddate==""){
+			$data['month'] = date('F');
+			$data['searchedmonth'] = date('F');
+		}else if($startdate=="" && $enddate!=""){
+			$data['month'] = date('F' ,strtotime($enddate));
+			$data['searchedmonth'] =  date('F' ,strtotime($enddate));
+		}else if($enddate=="" && $startdate!=""){
+			$data['month'] = date('F' ,strtotime($startdate));
+			$data['searchedmonth'] =  date('F' ,strtotime($startdate));
+		}else{
+			$data['searchedmonth'] =  $startdate.' TO '.$enddate;
+			$data['month'] = date('F' ,strtotime($startdate)).' TO '. date('F' ,strtotime($enddate));
+		}
+
+
+
 
 		$total_of_searched_amount=0;
+		$total_of_searched_amount_income=0;
 
 		if(count($data['get_all_office_expence'])){
 			foreach($data['get_all_office_expence'] as $gettingTotal){
@@ -282,8 +324,14 @@ class Employee extends CI_Controller {
 			}
 		}
 		$data['total_of_searched_amount'] = $total_of_searched_amount;
-		
-	
+
+		if(count($data['get_all_office_income'])){
+			foreach($data['get_all_office_income'] as $gettingTotal){
+				$total_of_searched_amount_income += $gettingTotal->oeamount;
+			}
+		}
+		$data['total_of_searched_amount_income'] = $total_of_searched_amount_income;
+
 		$this->load->view('layout/header');
 		$this->load->view('officexpence', $data);
 		$this->load->view('layout/footer');
@@ -295,24 +343,101 @@ class Employee extends CI_Controller {
 
 			$data['allofficeexpencethings'] = $this->Employee_models->all_office_expence_things();
 			$data['get_all_office_expence'] = $this->Employee_models->get_office_expence();
+			$data['get_all_office_income'] = $this->Employee_models->get_office_income();
 
 			$data['month'] = date('F');
-			
+			$data['searchedmonth'] = date('F');
 
 			$total_of_searched_amount=0;
+			$total_of_searched_amount_income=0;
 
 			if(count($data['get_all_office_expence'])){
 				foreach($data['get_all_office_expence'] as $gettingTotal){
 					$total_of_searched_amount += $gettingTotal->oeamount;
 				}
 			}
+			if(count($data['get_all_office_income'])){
+				foreach($data['get_all_office_income'] as $gettingTotal){
+					$total_of_searched_amount_income += $gettingTotal->oeamount;
+				}
+			}
 			$data['total_of_searched_amount'] = $total_of_searched_amount;
-			
-		
+			$data['total_of_searched_amount_income'] = $total_of_searched_amount_income;
+
+
 			$this->load->view('layout/header');
 			$this->load->view('officexpence', $data);
 			$this->load->view('layout/footer');
 
+	}
+
+
+	public function pendingnameids(){
+
+        $data = $this->db->query("SELECT tremainingamountpersondetail.trapdid, tremainingamountpersondetail.trapdname  FROM tremainingamountpersondetail where tremainingamountpersondetail.trapdamount<0");
+
+        return $data->result();
+
+	}
+
+
+	public function expence_and_pending(){
+		$this->load->model('main_model');
+
+		$data['totalremaining'] = $this->main_model->getremainingamountfromalltable();
+		$data['totalremaining_closed'] = $this->main_model->get_sumof_all_table_closed_amount();
+
+
+		$data['totalpending'] = $this->main_model->getpendingamountfromalltable();
+		$data['totalpending_closed'] = $this->main_model->get_sumof_all_table_closed_amount_payable();
+
+		$data['sum_of_have_haji_jani'] = $this->main_model->sum_of_have_haji_jani();
+
+			$this->load->view('layout/header');
+			$this->load->view('expence_and_pending', $data);
+			$this->load->view('layout/footer');
+	}
+
+	public function printpreview_dailyentry($page){
+			$data['page'] = $page;
+			$date = $this->input->get('date');
+
+			$date_explode =explode(' ',$date);
+
+			if(in_array('TO', $date_explode)){
+				$data['realsearched'] = $date;
+				$data['month'] = date('F' ,strtotime($date_explode[0])).' TO '. date('F' ,strtotime($date_explode[2]));
+				if($page==1){
+
+					$data['get_all_office_income_expence'] = $this->Employee_models->get_office_income_by_search($date_explode[0],$date_explode[2]);
+				}else if($page==2){
+					$data['get_all_office_income_expence'] = $this->Employee_models->get_office_expence_by_search($date_explode[0],$date_explode[2]);
+				}
+			}else{
+				$data['realsearched'] = $date;
+				$data['month'] = $date;
+				if($page==1){
+					$data['get_all_office_income_expence'] = $this->Employee_models->get_office_income($date);
+				}else if($page==2){
+					$data['get_all_office_income_expence'] = $this->Employee_models->get_office_expence($date);
+				}
+			}
+
+		$total_of_searched_amount_income=0;
+
+			if(count($data['get_all_office_income_expence'])){
+				foreach($data['get_all_office_income_expence'] as $gettingTotal){
+					$total_of_searched_amount_income += $gettingTotal->oeamount;
+				}
+			}
+			$data['get_all_office_income_expence_total'] = $total_of_searched_amount_income;
+
+
+
+
+			$this->load->view('layout/header');
+			$this->load->view('Printpreview_daily_entry.php', $data);
+			$this->load->view('layout/footer');
 	}
 
 }

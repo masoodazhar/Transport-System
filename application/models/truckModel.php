@@ -19,4 +19,13 @@ class TruckModel extends base_model
         $this->db->order_by("tid", "desc");
         return $this->db->get()->row('tid');
     }
+    public function checktruck($tname){
+        // $data = $this->db->where();
+        $q = $this->db->get_where('ttruck', array('tnumber'=>$tname));
+        if($q->num_rows()>0){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
 }

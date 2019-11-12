@@ -34,15 +34,13 @@ class Trip extends CI_Controller {
 		    $id = $this->input->post('myId');
 			$show_truck = $this->TripModel->get_truck();
 			$show_city = $this->CityModel->fetch_data();
-			$show_station = $this->StationModel->fetch_data('*',array('tcid'=>$id));
-			$showstation = $this->StationModel->fetch_data();
+			$show_station = $this->StationModel->fetch_data();
 			$pumpstation = $this->PumpModel->fetch_data();
 			$tripdetail = $this->TripModel->get_last_id();
 			$data=array(
 			'showtruck'=> $show_truck,
 			'showcity'=>$show_city,
 			'showstation'=>$show_station,
-			'showstation1'=>$showstation,
 			'showpump' =>$pumpstation,
 			'showtrip' =>$this->serial($tripdetail),
             'main_content'=>'addTripsummary'
@@ -74,6 +72,7 @@ class Trip extends CI_Controller {
 		$this->form_validation->set_rules('ttdfrom' , 'depparture date' , 'required');
 		$this->form_validation->set_rules('tid' , 'depparture date' , 'required');
 		
+		
 		if($this->form_validation->run())
 		{
 			$pname = $this->input->post('tpid');
@@ -81,23 +80,13 @@ class Trip extends CI_Controller {
 			$pplamount = $this->input->post('tpdprliteramount');
 			$ptid = $this->input->post('tid');
 			$pliter = $this->input->post('tpdliter');
-			$ppstatus = $this->input->post('tpdpaymentstatus');
+			$ppstatus = $this->input->post('tpdpaidamount');
 			$pindex = 0;
-// 			echo '<pre>';
-// 			print_r($pname);
-// 				echo '=======';
-// 			print_r($ptid);
-// 			echo '=======';
-// 			print_r($pliter);
-// 			print_r($plamount);
-// 			print_r($pplamount);
-// 			print_r($ppstatus);
-// 			die;
+
 			foreach($pname as $name){
 				$this->TripModel->add_pumpdetail($ptid, $name, $pliter[$pindex], $plamount[$pindex], $ppstatus[$pindex]);
 				$pindex++;
 			}
-            
             
 			$desc = $this->input->post('toedescription');
 			$amount = $this->input->post('toeamount');
@@ -110,16 +99,6 @@ class Trip extends CI_Controller {
 			}
 			
 			$last_id = $this->TripModel->get_last_id();
-			$data1 = array(
-				'trapdtypeid' => $this->input->post('trapdtypeid'),
-				'trapdname' => $this->input->post('trapdname'),
-				'trapdcontact' => $this->input->post('trapdcontact'),
-				'trapdamount' => $this->input->post('trremainingamount'),
-				'trapdformid' => $last_id+1,
-				'trapddate' => $this->input->post('trapddate'),
-				'trapddescription' => $this->input->post('trapddescription'),
-			 );
-			$this->RemainModel->add_data($data1);
 			$data2 = array(
 				'trarrivingdate' => $this->input->post('trarrivingdate'),
 				'tid' => $this->input->post('tid'),
@@ -153,11 +132,6 @@ class Trip extends CI_Controller {
 			$this->ReturntripModel->add_data($data2);
 			$data = $this->input->post();
 			unset($data['addtripsummary']);
-			unset($data['trapdtypeid']);
-			unset($data['trapdname']);
-			unset($data['trapddate']);
-			unset($data['trapddescription']);
-			unset($data['trapdcontact']);
 			unset($data['toeamount']);
 			unset($data['toedescription']);
 			unset($data['toeidentity']);
@@ -165,7 +139,7 @@ class Trip extends CI_Controller {
 			unset($data['tpdamount']);
 			unset($data['tpdprliteramount']);
 			unset($data['tpdliter']);
-			unset($data['tpdpaymentstatus']);
+			unset($data['tpdpaidamount']);
 			unset($data['trdateofpay']);
 			unset($data['trremainingamount']);
 			unset($data['trrecievedamount']);

@@ -11,19 +11,19 @@
       </footer>
     </div>
   </div>
-  
+
   <!--   Core JS Files   -->
-  
-  
+
+
 <script src="<?php echo base_url()?>assets/js/jquery-1.11.1.min.js"></script>
-    
+
 <script src="<?php echo base_url()?>assets/js/jquery-ui.1.11.2.min.js"></script>
 <script src="<?php echo base_url()?>assets/js/jquery.canvasjs.min.js"></script>
   <!-- <script src="<?php echo base_url()?>assets/js/core/jquery.min.js"></script> -->
   <script src="<?php echo base_url()?>assets/js/core/popper.min.js"></script>
   <script src="<?php echo base_url()?>assets/js/core/bootstrap-material-design.min.js"></script>
   <script src="<?php echo base_url()?>assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-  <!-- Plugin for the momentJs  -->     
+  <!-- Plugin for the momentJs  -->
   <script src="<?php echo base_url()?>assets/js/plugins/moment.min.js"></script>
   <!--  Plugin for Sweet Alert -->
   <script src="<?php echo base_url()?>assets/js/plugins/sweetalert2.js"></script>
@@ -65,12 +65,81 @@
   <script src="<?php echo base_url()?>assets/demo/demo.js"></script>
 
   <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    
+
   <!-- Sharrre libray -->
   <script src="<?php echo base_url()?>assets/demo/jquery.sharrre.js"></script>
+    <script src="<?php echo base_url()?>assets/js/jQuery.print.min.js"></script>
   <script src="<?php echo base_url()?>assets/js/core/transport_jquery.js"></script>
   <script>
     $(document).ready(function() {
+
+      $('.truck_notify_update').click(function(){
+          var notiid = $(this).next().next('input').val();
+
+          $('.set_notify_id').val(notiid);
+          var url = '<?=base_url()?>main/get_notify_dates';
+        $.ajax({
+          url:url,
+          type:'POST',
+          data:{id:notiid},
+          success:function(data){
+            data = JSON.parse(data);
+            $('#tninsuranceexpirydate_set').val(data.tninsuranceexpirydate);
+            $('#tnpermitexpirydate_set').val(data.tnpermitexpirydate);
+            $('#tnfitnessexpirydate_set').val(data.tnfitnessexpirydate);
+            $('#tntexexpirydate_set').val(data.tntexexpirydate);
+          }
+        });
+
+      });
+
+      $('#change_category').on('change',function(){
+          var category = $(this).children('option:selected').val();
+         window.location.assign('<?=base_url()?>close_other/check_details/'+category)
+      });
+
+      $('#search_remaining').on('change',function(){
+          var id = $(this).children('option:selected').val();
+          var category = $('#change_category').children('option:selected').val();
+         window.location.assign('<?=base_url()?>close_other/check_details/'+category+'/'+id)
+      });
+
+
+
+      $('.Truck_no_click').click(function(){
+        $('.display_loading').show();
+        var tid = $(this).next('input').val();
+        var url = '<?=base_url()?>main/get_truck_notification_details_on_tnotify_id';
+        $.ajax({
+          url:url,
+          type:'POST',
+          data:{tid:tid},
+          success:function(data){
+            $('.displayMessage').html(data);
+          }
+        });
+      });
+
+
+      $('.viewtable_details').click(function(e){
+        e.preventDefault();
+        var stationid = $(this).next('input.stationid').val();
+        var tablename = $(this).next().next('input.tablename').val();
+        var remain_columname = $(this).next().next().next('input.remain_columname').val();
+        var station_columname = $(this).next().next().next().next('input.station_columname').val();
+        var stationname = $(this).next().next().next().next().next('input.stationname').val();
+
+        var url = '<?=base_url()?>main/get_all_details_from_one_table_on_stationid';
+        $('.openmodal_for_data').click();
+        $.ajax({
+          url:url,
+          type:'POST',
+          data: {stationid:stationid, tablename:tablename, remain_columname:remain_columname,station_columname:station_columname, stationname:stationname },
+          success:function(data){
+            $('.setalldata').html(data);
+          }
+        });
+      });
 
       var hajijaniFormSubmittedgetvalue = $('.hajijaniFormSubmittedgetvalue').text();
       if(hajijaniFormSubmittedgetvalue=='false'){
@@ -248,14 +317,167 @@
   <!-- Sharrre libray -->
   <script src="<?php echo base_url()?>assets/demo/jquery.sharrre.js"></script>
   <script>
+
+    <?php
+   if($this->session->flashdata('datasaved') ){
+    ?>
+    var notify = $.notify('<strong>Managing Data..... </strong> Wait a second', {
+      allow_dismiss: false,
+      showProgressbar: true,
+      placement: {
+        from: 'top',
+        align: 'center'
+      }
+    });
+  <?php } ?>
+
     $(document).ready(function() {
+      $('[data-toggle="tooltip"]').tooltip();
+
+      $('.swal2-confirm').on('click',function(){
+        alert();
+      });
+
+      // stillremainingamount_of_truck
+      $('#trapdcndate').on('change' , function(){
+          if($(this).is(':checked'))
+          {
+            $('.trapdcndate').show();
+          }
+          else
+          {
+           $('.trapdcndate').hide();
+          }
+        });
+
+
+        // $('#getadvancedetails').click(function(){
+        //     var url = '<?=base_url()?>Employee/advancedetails';
+        //     var id = $(this).children('input').val();
+        //     $.ajax({
+        //       url:url,
+        //       type:'POST',
+        //       data:{id:id},
+        //       success:function(data){
+        //         // $('.employee_set_advance').html(data);
+        //       }
+        //     });
+        // });
+//===================================START Employee SALARY TABLE===========================
+
+
+                  var saltotalsalary=0;
+                  var salbonus=0;
+                  var saleidi=0;
+                  var saladvanceinstallmen=0;
+                  var emp_total_salary=0;
+                  $('.salbonus, .saleidi, .saladvanceinstallment').keyup(function(){
+
+                    salbonus = $.trim($('.salbonus').val());
+                    salbonus = parseInt(salbonus==""?0:salbonus);
+
+                    saleidi = $.trim($('.saleidi').val());
+                    saleidi = parseInt(saleidi==""?0:saleidi);
+
+                    saltotalsalary = $.trim($('.oraginalSalary').val());
+                    saltotalsalary = parseInt(saltotalsalary==""?0:saltotalsalary);
+
+                    saladvanceinstallment = $.trim($('.saladvanceinstallment').val());
+                    saladvanceinstallment = parseInt(saladvanceinstallment==""?0:saladvanceinstallment);
+
+
+
+                    emp_total_salary = $.trim($('.emp_total_salary').text());
+                    emp_total_salary =parseInt(emp_total_salary==''?0:emp_total_salary);
+
+
+                    empsalary_advance_still_remaining = $.trim($('.empsalary_advance_still_remaining').text());
+                    empsalary_advance_still_remaining =parseInt(empsalary_advance_still_remaining==''?0:empsalary_advance_still_remaining);
+
+                    employee_status = $.trim($('.employee_status').text());
+                    employee_status =parseInt(employee_status==''?0:employee_status);
+
+
+
+                    fillandfinal = saltotalsalary+salbonus+saleidi-saladvanceinstallment;
+
+                    if(saladvanceinstallment>emp_total_salary || saladvanceinstallment>empsalary_advance_still_remaining){
+                      $('.saladvanceinstallment').css('border',' solid 2px red');
+                        if(employee_status>0){
+                            $('.saladvanceinstallment').val(empsalary_advance_still_remaining);
+                             var fillandfinal = saltotalsalary+salbonus+saleidi-empsalary_advance_still_remaining;
+                            $('.saltotalsalary').val(fillandfinal);
+                        }else{
+                             $('.saladvanceinstallment').val(empsalary_advance_still_remaining);
+                        }
+
+                    }else{
+                      $('.saladvanceinstallment').css('background','white');
+                      $('.saladvanceinstallment').css('border',' solid 1px green');
+                      $('.saltotalsalary').val(fillandfinal);
+                    }
+                    //  = saladvanceinstallment+saltotalsalarys;
+
+                  });
+
+
+
+
+                  //===================================END Employee SALARY TABLE===========================
+
 
                         $('#allnameOfremainingamount').on('change',function(){
                           var id = $(this).children('option:selected').val();
                           var base_url = '<?=base_url();?>';
                           // alert(base_url);
-                          window.location.assign(base_url+'/close/add_close/'+id);
+                          window.location.assign(base_url+'close/add_close/'+id+'/0');
                         });
+
+                        $('#allnameOfremainingamount_get_sum_of_table_amount').on('change',function(){
+                          var stationid = $('#allnameOfremainingamount').children('option:selected').val();
+                          var truckid = $(this).children('option:selected').val();
+                          var base_url = '<?=base_url();?>';
+                          // alert(base_url);
+                          window.location.assign(base_url+'close/add_close/'+stationid+'/'+truckid);
+                        });
+
+                        $('#allnameOfpayableamount').on('change',function(){
+                          var id = $(this).children('option:selected').val();
+                          var base_url = '<?=base_url();?>';
+                          // alert(base_url);
+                          window.location.assign(base_url+'PendingClosed/add_close/'+id+'/0');
+                        });
+
+                        $('#allnameOfpayableamount_get_sum_of_table_amount').on('change',function(){
+                          var stationid = $('#allnameOfpayableamount').children('option:selected').val();
+                          var truckid = $(this).children('option:selected').val();
+                          var base_url = '<?=base_url();?>';
+                          // alert(base_url);
+                          window.location.assign(base_url+'PendingClosed/add_close/'+stationid+'/'+truckid);
+                        });
+
+
+                        $('#allnameOfremainingamount_truck').on('change',function(){
+                          var id = $(this).children('option:selected').val();
+                          var base_url = '<?=base_url();?>';
+                          // alert(base_url);
+                          window.location.assign(base_url+'main/remainingreportview/4/'+id);
+                        });
+
+                        $('#allnameOfpayableamount_truck').on('change',function(){
+                          var id = $(this).children('option:selected').val();
+                          var base_url = '<?=base_url();?>';
+                          // alert(base_url);
+                          window.location.assign(base_url+'main/payablereportview/4/'+id);
+                        });
+
+                        $('#allnameOfpendingamount').on('change',function(){
+                          var id = $(this).children('option:selected').val();
+                          var base_url = '<?=base_url();?>';
+                          // alert(base_url);
+                          window.location.assign(base_url+'PendingClosed/add_close/'+id);
+                        });
+
 
 
       $('#facebook').sharrre({
@@ -337,7 +559,7 @@
       }
 
     });
-    
+
     $(document).ready( function () {
     $('#datatables').DataTable();
     } );
@@ -358,6 +580,9 @@
     } );
     $(document).ready( function () {
     $('#truckdetail').DataTable();
+    } );
+    $(document).ready( function () {
+    $('#datatables6').DataTable();
     } );
   </script>
   <noscript>
@@ -659,9 +884,9 @@
           current_td_value = $(this).text();
           current_row_id = $(this).siblings('td').find('input').val();
           current_td_column_name = $(this).prop('class');
-         
+
           if(current_td_column_name=='empimage'){
-           
+
             // // $(this).text('');
             // image = $(this).children('img').prop('src');
             // // alert(image);
@@ -689,23 +914,23 @@
             $(this).append('<input type="text" value="'+current_td_value+'" class="currentvalue"><button>save</button>');
 
           }
-          
-         
+
+
         });
 
 
 
 
         $('.employeetable').children('tbody').children('tr').find('td').delegate(':button','click',function(){
-         
+
             current_td_value = $(this).siblings('.currentvalue').val();
             current_td_column_name = $(this).parent('td').prop('class');
             var updateurl = '<?= base_url()?>Employee/updateemployee';
-            
+
             if(current_td_column_name=='empimage'){
              // $(this).text('');
                   image = $(this).siblings('img').prop('src');
-                
+
                   var urls = image.split("/");
                   imagepath = urls.join("/");
 
@@ -713,7 +938,7 @@
                   current_td_value = urls_of_new_imgae.pop();
 
                   // $('.load').submit();
-                  
+
 
               }else{
                   $(this).parent('td').text(current_td_value);
@@ -724,66 +949,37 @@
               data:{id:current_row_id, val:current_td_value,column:current_td_column_name},
               success:function(data){
                 $('.saveimage').submit();
-              } 
+              }
             });
 
-            
+
         });
      //===================================END Employee EDIT TABLE===========================
 
-       //===================================START Employee SALARY TABLE===========================
-    
 
-                  var saltotalsalary=0;
-                  saltotalsalary = $.trim($('.oraginalSalary').val());
-                  saltotalsalary = parseInt(saltotalsalary==""?0:saltotalsalary);
-                  var salbonus=0;
-                  var saleidi=0;
-                  $('.salbonus, .saleidi, .saladvanceinstallment').keyup(function(){
-
-                    salbonus = $.trim($('.salbonus').val());
-                    salbonus = parseInt(salbonus==""?0:salbonus);
-
-                    saleidi = $.trim($('.saleidi').val());
-                    saleidi = parseInt(saleidi==""?0:saleidi);
-
-                    saladvanceinstallment = $.trim($('.saladvanceinstallment').val());
-                    saladvanceinstallment = parseInt(saladvanceinstallment==""?0:saladvanceinstallment);
-
-                   
-
-                    fillandfinal = saltotalsalary+salbonus+saleidi-saladvanceinstallment;
-                    //  = saladvanceinstallment+saltotalsalarys;
-                    $('.saltotalsalary').val(fillandfinal);
-                  });
-                  
-                  
-                  
-                  
-                  //===================================END Employee SALARY TABLE===========================
 
                   //===================================START ACTIVE DEACTIVE EMPLOYEE TABLE===========================
-    
+
                   $('.active_eactive').click(function(){
                    checkValue = $(this).text();
                    id = $(this).siblings('input').val();
-                
+
                    if(checkValue=='Deactivate'){
                     $(this).text('Activate');
                     $(this).removeClass('btn-warning');
-                   
+
                     $(this).addClass('mx-2');
                     $(this).addClass('btn-success');
                     $(this).parent('td').parent('tr').css('background', 'cadetblue').css('color','white');
-                    
+
                     modal = $(this).parent('td').children('a.advancemodalbtn').attr('data-toggle','');
-                  
+
                     $.ajax({
                       url:'<?=base_url()?>Employee/active_deactive_employee',
                       type:'POST',
                       data:{id:id,status:0},
                       success:function(){
-                        
+
                       }
                     });
                    }else{
@@ -799,19 +995,19 @@
                       type:'POST',
                       data:{id:id,status:1},
                       success:function(){
-                        
+
                       }
                     });
                    }
                   });
-                 
-                  
+
+
                   var adinstallment=0;
                   var adadvance=0;
                   $('.adinstallment, .adadvance').keyup(function(){
 
-                    
-                    
+
+
                     adadvance = $.trim($('.adadvance').val());
                     adadvance = parseInt(adadvance==''?0:adadvance)
 
@@ -822,15 +1018,15 @@
                       alert('Installment can not be greater than Advance');
                       $('.adinstallment').val(adadvance)
                     }else{
-                      
+
                     }
 
                   });
-                  
+
                   // start Salary Date validation two month salary payed on same date
 
 
-                  
+
                   $('.saldate').change(function(){
 
                     cureent_date = $(this).val();
@@ -839,16 +1035,16 @@
                       date = $(this).find('td').eq(2).text();
                       allDate.push(date);
                     });
-                  
+
                     // if(allDate.indexOf(cureent_date)!=-1){
                     //   alert('This date is already available. please select an other date');
                     //   $(this).val('');
                     // }
                   });
                   // end of salary two month o=paid on same date
-                  
+
                   //===================================END ACTIVE DEACTIVE EMPLOYEE TABLE===========================
-       
+
 
 
 
@@ -867,7 +1063,31 @@
 
                 });
               </script>
-   
+
 </body>
 
 </html>
+
+
+              <!-- Modal -->
+              <div class="row">
+                  <div class="col-sm-9 offset-sm-2">
+                      <div class="modal col-sm-10 offset-sm-1 my-4" role="document" id="manage_model">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <?=$_SESSION['all_manageable_data'];?>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>

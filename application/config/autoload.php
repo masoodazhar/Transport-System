@@ -132,4 +132,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('DriverModel','base_model','MaintenanceModel','TruckModel', 'ShopModel' , 'TyreModel' , 'OilModel' , 'CityModel' , 'StationModel' , 'PumpModel' , 'TripModel' ,  'ReturntripModel' , 'MaterialModel','NotificationModel' , 'RemainModel' , 'ClosedModel' , 'BrokerModel' , 'DailytripModel' , 'PumpdetailModel' );
+$autoload['model'] = array('DriverModel','base_model','MaintenanceModel','TruckModel', 'ShopModel' , 'TyreModel' , 'OilModel' , 'CityModel' , 'StationModel' , 'PumpModel' , 'TripModel' ,  'ReturntripModel' , 'MaterialModel','NotificationModel' , 'RemainModel' , 'ClosedModel' , 'BrokerModel' , 'DailytripModel' , 'PumpdetailModel','PendingClosed_model' , 'LocalModel' );

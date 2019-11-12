@@ -71,6 +71,9 @@
                           
                           
                       </div>
+
+
+                      
                       <div class="card">
                 <div class="card-header card-header-rose card-header-icon">
                   <div class="card-icon">
@@ -117,6 +120,59 @@
                   </div>
                 </div>
               </div>
+
+
+              <div class="card">
+                <div class="card-header card-header-rose card-header-icon">
+                  <div class="card-icon">
+                    <i class="material-icons">location_city</i>
+                  </div>
+                  <h4 class="card-title">Haji Jani Taken From Others</h4>
+                </div>
+                <div class="card-body">
+                  <div class="material-datatables">
+                    <table class="table" id="datatables6">
+                      <thead>
+                        <tr>
+                          <th class="text-center">#</th>
+                          <th>Total Taken</th>
+                          <th>Payment Date</th>
+                          <th>Details</th>
+                          <th class="text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php $id=1; foreach ($hajijani_taken_from_others as $results) { ?>
+                        <tr> 
+                          <td class="text-center"><?php echo $id; ?></td>
+                          <td><?php echo $results->oeamount; ?></td>
+                          <td><?php echo $results->oedate; ?></td>
+                          <td><?php echo $results->oedetail; ?></td>
+                          
+                          <td class="td-actions text-right">
+                            <a href="" rel="tooltip" class="btn btn-success">
+                              <i class="material-icons">remove_red_eye</i>
+                            </a> 
+                            <a href="" rel="tooltip" class="btn btn-danger">
+                              <i class="material-icons">delete</i>
+                            </a>
+                          </td>
+                        </tr>
+                        <?php
+                          $id++;  
+                          }
+                       
+                      ?>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+
   
               <div class="card">
                 <div class="card-header card-header-rose card-header-icon">

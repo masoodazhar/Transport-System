@@ -35,4 +35,10 @@ class DailytripModel extends base_model
         $data = array('toeidentity' => $s, 'toedescription'=>$d , 'toeamount'=>$a);
         return $this->db->insert('totherexpense',$data);
     }
+
+    public function show_data()
+    {
+        $data = $this->db->query('Select tdailytrip.* , ttruck.tnumber , tcity.tcname , tstation.tstname FROM tdailytrip INNER JOIN ttruck ON tdailytrip.tid = ttruck.tid INNER JOIN tcity ON tdailytrip.tcid = tcity.tcid INNER JOIN tstation ON tdailytrip.tstid = tstation.tstid');
+        return $data->result();
+    }
 }   

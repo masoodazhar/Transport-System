@@ -10,7 +10,7 @@ class Shop extends CI_Controller {
 		$shop_data = $this->ShopModel->fetch_data();
 		$data=array(
 			'shop'=>$shop_data,
-            'main_content'=>'shop'
+            'main_content'=>'Shop'
         );
         $this->load->view('default' , $data);
 	}
@@ -28,7 +28,7 @@ class Shop extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('tsname' , 'shop name' , 'required');
 		$this->form_validation->set_rules('tsrname' , 'retailer name' , 'required');
-		$this->form_validation->set_rules('tscontact' , 'shop contact' , array('required', 'min_length[11]'));
+		$this->form_validation->set_rules('tscontact' , 'shop contact' , 'required');
 		$this->form_validation->set_rules('tsaddress' , 'shop address' , 'required');
 		$this->form_validation->set_rules('tstype' , 'shop type' , 'required');
 		$this->form_validation->set_rules('tsdescription' , 'shop description' , 'required');
@@ -39,7 +39,7 @@ class Shop extends CI_Controller {
 			$data = $this->input->post();
 			unset($data['addshop']);
 			$this->ShopModel->add_data($data);
-                redirect(base_url() . 'shop');
+                redirect(base_url() . 'Shop');
 		}
 	 else
         {
@@ -67,7 +67,7 @@ class Shop extends CI_Controller {
 
         $result = $this->ShopModel->delete_data(array('sid'=>$id));
         // print_r($result);die;
-        redirect(base_url(). 'shop');
+        redirect(base_url(). 'Shop');
     }
 	//End delete shop
 }

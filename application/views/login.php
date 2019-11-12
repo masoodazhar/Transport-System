@@ -1,7 +1,14 @@
+<?php
+
+if(isset($_SESSION["user"]))
+    {
+      redirect('Main');
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V3</title>
+	<title>AFS LOGIN PANEL</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -34,7 +41,7 @@
 			<div class="wrap-login100">
 				<form class="login100-form validate-form" method="POST" action="<?=base_url()?>Login_Controller/login">
 					<span class="login100-form-logo">
-						<i class="zmdi zmdi-landscape"></i>
+						<img src="<?=base_url()?>assets/img/logo.png">
 					</span>
 
 					<span class="login100-form-title p-b-34 p-t-27">

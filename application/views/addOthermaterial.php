@@ -2,7 +2,7 @@
 <div class="content">
         <div class="container-fluid">
           <div class="row">
-            
+
             <div class="col-md-12">
               <div class="card ">
                 <div class="card-header card-header-rose card-header-text">
@@ -11,7 +11,7 @@
                   </div>
                 </div>
                 <div class="card-body ">
-                <form class="form-horizontal comissionform othercomissionform" method="POST" action="<?php echo base_url()?>material/material_validation" id="parchoonform" >
+                <form class="form-horizontal comissionform othercomissionform" method="POST" action="<?php echo base_url()?>material/material_validation" id="parchoonform" enctype="multipart/form-data" >
 
                 <div class="row">
 
@@ -26,7 +26,7 @@
 
                   <div class="col-sm-5">
                    <div class="form-group">
-                    <select class="selectpicker" data-style="select-with-transition" title="Choose Truck" data-size="5" name="tid" tabindex="-98">
+                    <select class="selectpicker othermaterialtruckids" data-style="select-with-transition" title="Choose Truck" data-size="5" name="tid" tabindex="-98">
                      <?php if(count($show_truck) > 0) { foreach ($show_truck as $trow) {
                        echo '<option value="'.$trow->tid.'">'.$trow->tnumber.'</option>';
                      }} ?>
@@ -37,18 +37,12 @@
                   </div>
 
                 </div>
- 
+
                 <div class="row">
 
                   <div class="col-sm-1"></div>
-                 <div class="col-sm-3">
-                   <div class="form-group">
-                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Item</label>
-                     <input type="text" class="form-control" name="tomitem" value="<?php echo set_value('tomitem'); ?>">
-                   </div>
-                  </div>
 
-                  <div class="col-sm-3">
+                  <div class="col-sm-6">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">Restrict Weight <sup>IN TON</sup> </label>
                      <input type="number" class="form-control" name="tomweightspace" value="<?php echo set_value('tomweightspace'); ?>">
@@ -74,13 +68,19 @@
                     <input type="text" class="form-control" name="tomlocation" value="<?php echo set_value('tomlocation'); ?>">
                     <span class="text-danger"><?php echo form_error('tomlocation'); ?></span>
                    </div>
-                  </div>                  
+                  </div>
 
-                  
+
                   <div class="col-sm-4">
                    <div class="form-group">
-                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Station</label>
-                    <input type="text" class="form-control" name="tomtransporter" value="<?php echo set_value('tomtransporter'); ?>">
+                            <select class="selectpicker" data-style="select-with-transition" title="Choose Station" name="tomtransporter" data-size="5" tabindex="-98">
+                              <?php
+                               foreach ($show_station as $srow)
+                               {
+                                 echo '<option value="'.$srow->tstid.'">'.$srow->tstname.'</option>';
+                               }
+                              ?>
+                          </select>
                     <span class="text-danger"><?php echo form_error('tomtransporter'); ?></span>
                    </div>
                   </div>
@@ -111,10 +111,10 @@
                    </div>
                  </div>
 
-                </div>  
+                </div>
 
                 <div class="row">
-                 
+
                  <div class="col-sm-1"></div>
                  <div class="col-sm-3">
                    <div class="form-group">
@@ -194,7 +194,7 @@
                 </div>
 
                   <div class="row">
-                  
+
                   <div class="col-sm-1"></div>
                   <div class="col-sm-3">
                    <div class="form-group">
@@ -213,10 +213,10 @@
                   <input type="hidden" class="form-control" name="toeidentity[]" value="parchoon-0">
 
                   <a href="#" class="add_parchoon my-2" title="Add new field"><i class="material-icons">add_circle</i></a>
-                  
+
                 </div>
                 <input type="hidden" value="0" class="form-control comisionsum">
-                
+
                 <div class="add_parchoons"></div>
 
                 <div class="row">
@@ -243,8 +243,6 @@
                     </div>
                    </div>
 
-                   <a href="#" data-toggle="modal" data-target="#parchoonremain" class="my-2" title="Add details"><i class="material-icons">add_circle</i></a>
-
                   </div>
 
                   <div class="row">
@@ -256,7 +254,7 @@
                     <input type="text" class="form-control tompaymentstatus" name="tompaymentstatus" readonly="readonly" value="<?php echo set_value('tompaymentstatus'); ?>">
                    </div>
                   </div>
-                   
+
                     <div class="col-md-3">
                     <div class="form-group">
                       <label for="exampleEmail" class="text-uppercase">Date of pay</label>
@@ -275,7 +273,7 @@
                           <span class="btn btn-round btn-rose btn-file">
                             <span class="fileinput-new">Add Photo</span>
                             <span class="fileinput-exists">Change</span>
-                            <input type="hidden" value="" name="tomimage"><input type="file" name="" class="form-control">
+                            <input type="hidden" value="" name="tomimage"><input type="file" name="tomimage" class="form-control">
                           <div class="ripple-container"></div></span>
                           <br>
                           <a href="extended.html#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i> Remove<div class="ripple-container"><div class="ripple-decorator ripple-on ripple-out" style="left: 45.6719px; top: 21.7813px; background-color: rgb(255, 255, 255); transform: scale(15.5098);"></div></div></a>
@@ -291,64 +289,11 @@
                 <a href="<?php echo base_url()?>material" class="btn btn-danger btn-round">Close</a>
               </div>
 
-              <!-- Classic Modal -->
-                      <div class="modal fade" id="parchoonremain" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h3 class="modal-title">Remaining Amount Detail</h3>
-                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                <i class="material-icons">clear</i>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Concern Person</label>
-                                    <input type="text" value="" class="form-control" id="trapdname" name="trapdname">
-                                  </div>
-                                </div>
-                                <div class="col-md-6">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Contact</label>
-                                    <input type="text" value="" class="form-control" name="trapdcontact" id="totalprice">
-                                  </div>
-                                </div>
-                                </div>
-                                <div class="row">
-                                <div class="col-md-12">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="">Return Date</label>
-                                    <input type="text" class="form-control datepicker" name="trapddate">
-                                  </div>
-                                </div>
-                                <div class="col-md-12">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Description</label>
-                                    <textarea class="form-control" name="trapddescription"></textarea>
-                                  </div>
-                                </div>
-                                <div class="col-md-12">
-                                  <div class="form-group">
-                                    <input type="hidden" class="form-control" name="trapdtypeid" value="parchoon-0">
-                                  </div>
-                                </div>
-                                </div>
-                              </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-success" data-dismiss="modal">Done</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!--  End Modal -->
-
                   </form>
                </div>
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>

@@ -13,40 +13,55 @@
                 <div class="card-body ">
                 <form class="form-horizontal" method="POST" action="<?=base_url()?>tyre/tyre_validation">
                 <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating">Name</label>
                     <input type="text" class="form-control" name="ttname">
                     <span class="text-danger"><?php echo form_error('ttname'); ?></span>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating">No. Of Tyres <sub>(in Pair/s)</sub></label>
                     <input type="number" class="form-control qpair" name="tttyrepair">
                     <span class="text-danger"><?php echo form_error('tttyrepair'); ?></span>
                   </div>
                 </div>
-                </div>
-
-                <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating">Price per pair</label>
                     <input type="text" class="form-control perprice" name="ttprice">
                     <span class="text-danger"><?php echo form_error('ttprice'); ?></span>
                   </div>
                 </div>
-                <div class="col-md-6">
+                </div>
+
+                <div class="row">
+                <div class="col-md-4">
                   <div class="form-group">
-                    <input type="number" class="form-control tprice" name="tttotalprice" placeholder="Total Price">
+                    <label for="exampleEmail" class="">Total Price</label>
+                    <input type="number" class="form-control tprice" readonly="readonly" name="tttotalprice">
                     <span class="text-danger"><?php echo form_error('tttotalprice'); ?></span>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleEmail" class="bmd-label-floating">Paid Amount</label>
+                    <input type="text" class="form-control ttpaid" name="ttpaid">
+                    <span class="text-danger"><?php echo form_error('ttpaid'); ?></span>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleEmail" class="">Remaining Amount</label>
+                    <input type="text" readonly="readonly" class="form-control ttremaining" name="ttremaining">
+                    <span class="text-danger"><?php echo form_error('ttremaining'); ?></span>
                   </div>
                 </div>
                 </div>
 
                 <div class="row">
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                   <div class="form-group">
                    <select class="selectpicker" name="ttshopid"  data-style="select-with-transition" title="Shop" data-size="5" tabindex="-98">
                     <?php 
@@ -59,7 +74,7 @@
                     <span class="text-danger"><?php echo form_error('ttshopid'); ?></span>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating">Description</label>
                     <textarea class="form-control" name="ttdescription"></textarea>

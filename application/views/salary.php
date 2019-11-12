@@ -82,21 +82,21 @@ if($emplyee_data->empstatus==1){
             <div class="card border-success mx-sm-1 p-3">
                 <div class="card border-success shadow text-success p-3 my-card"><span class="fa fa-money" aria-hidden="true"></span></div>
                 <div class="text-success text-center mt-3"><h4>Sum Of Salary</h4></div>
-                <div class="text-success text-center mt-2"><h2>Rs.<?php echo $this->Employee_models->sum_of_one_employee_salary($emplyee_data->empid)>0?$this->Employee_models->sum_of_one_employee_salary($emplyee_data->empid):0; ?></h2></div>
+                <div class="text-success text-center mt-2"><h2>Rs.<?php echo $this->Employee_models->sum_of_one_employee_salary($emplyee_data->empid)>0?$this->Employee_models->sum_of_one_employee_salary($emplyee_data->empid)-$get_only_advanceinstallment_employee:0; ?></h2></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card border-warning mx-sm-1 p-3">
                 <div class="card border-warning shadow text-warning p-3 my-card" ><span class="fa fa-area-chart" aria-hidden="true"></span></div>
-                <div class="text-warning text-center mt-3"><h4>Advance Amount Returned</h4></div>
+                <div class="text-warning text-center mt-3"><h4>Advance Amount Detected</h4></div>
                 <div class="text-warning text-center mt-2"><h2>Rs. <?php echo $this->Employee_models->sum_of_one_employee_advance_returned($emplyee_data->empid)>0?$this->Employee_models->sum_of_one_employee_advance_returned($emplyee_data->empid):0; ?></h2></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card border-danger mx-sm-1 p-3">
                 <div class="card border-danger shadow text-danger p-3 my-card" ><span class="fa fa-credit-card" aria-hidden="true"></span></div>
-                <div class="text-danger text-center mt-3"><h4>Still Advance Remaining</h4></div>
-                <div class="text-danger text-center mt-2"><h2>Rs. <?php echo $advance_payment_held_by_employee-$this->Employee_models->sum_of_one_employee_advance_returned($emplyee_data->empid); ?></h2></div>
+                <div class="text-danger text-center mt-3"><h4>Still Remaining Amount</h4></div>
+                <div class="text-danger text-center mt-2"><h2>Rs. <span class="empsalary_advance_still_remaining"><?=$advance_payment_held_by_employee-$this->Employee_models->sum_of_one_employee_advance_returned($emplyee_data->empid); ?></span></h2></div>
             </div>
         </div>
         
@@ -119,6 +119,7 @@ if($emplyee_data->empstatus==1){
                                       <li><img width="70" height="70" src="<?php echo $emplyee_data->empimage==NULL? base_url().'uploads/'.'noimage.png': base_url().'uploads/'.$emplyee_data->empimage; ?>"></li>
                                       <li>
                                          <p >Account Status: <?php if($emplyee_data->empstatus==1){echo 'Active';}else{echo 'Deactive';} ?></p>
+                                         <span class="employee_status" style="display:none;"><?=$emplyee_data->empstatus;?></span>
                                          <h2> <?=$emplyee_data->empname;?> </h2>
                                       </li>
                                     </ul>
@@ -127,12 +128,12 @@ if($emplyee_data->empstatus==1){
                               </div>
                               <div class="col-sm-4">
                                 <div class="card-text" style="background: black;">
-                                  <h4 class="card-title">Total Advance held <?php if($advance_payment_held_by_employee>0){echo '<a  onclick="openWin(this.id)" href="#" id="'.base_url().'Employee/advancedetails/'.$emplyee_data->empid.'"> <i class="material-icons" data-toggle="modal" data-target="#modelId" style="color:red;">remove_red_eye</i> '.$advance_payment_held_by_employee.'</a>';}else{echo 0;} ?></h4>
+                                  <h4 class="card-title">Total Advance held (<b>Rs. </b> <?php if($advance_payment_held_by_employee>0){echo $advance_payment_held_by_employee.')  <a  href="#"  id="getadvancedetails"  data-toggle="modal" data-target="#emoplyeeadvance_modal"><input type="hidden" value="'.$emplyee_data->empid.'"> <i class="material-icons" data-toggle="modal" data-target="#modelId" style="color:red;">remove_red_eye</i> View</a>';}else{echo 0;} ?> </h4>
                                 </div> 
                               </div>
                               <div class="col-sm-4">
                                 <div class="card-text" style="background: #056e20;">
-                                  <h4 class="card-title">Employee Monthly Salary Befor Detection <b>Rs. <?=$emplyee_data->empsalary;?></b></h4>
+                                  <h4 class="card-title">Employee Monthly Salary Befor Detection <b>Rs. <span class="emp_total_salary"><?=$emplyee_data->empsalary;?></span></b></h4>
                                 </div>
                               </div>
                             </div>
@@ -181,8 +182,9 @@ if($emplyee_data->empstatus==1){
                         <div class="form-group  ">
                         <label for="exampleEmail" class="bmd-label-floating">Employee Salary After detection</label>
                         <input type="hidden" class="oraginalSalary" value="<?=$emplyee_data->empsalary?>">
-                        <input type="text" class="form-control saltotalsalary" name="saltotalsalary"
+                        <input type="text" class="form-control <?php if($emplyee_data->empstatus==1){ echo 'saltotalsalary'; }?>"  readonly="readonly" name="saltotalsalary"
                          value="<?php
+                         if($emplyee_data->empstatus==1){
                            if($advance_payment_held_by_employee-$this->Employee_models->sum_of_one_employee_advance_returned($emplyee_data->empid)>0){
 
                             if($advance_payment_held_by_employee-$this->Employee_models->sum_of_one_employee_advance_returned($emplyee_data->empid)<$advanceinstallmentpermonth){
@@ -195,7 +197,9 @@ if($emplyee_data->empstatus==1){
                          }else{
                            echo $emplyee_data->empsalary;
                          }
-                          
+                         }else{
+                             echo 0;
+                         }
                           
                           ?>
                          ">
@@ -357,3 +361,58 @@ if($emplyee_data->empstatus==1){
                         </tbody>
                         </table> -->
     <!-- Modal -->
+
+    <div id="emoplyeeadvance_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width:700px;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="my-modal-title">Employee Advance Details / List</h5>
+            <button class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-strped" id="datatables4">
+              <thead class="thead-light">
+                <tr>
+                  <th>Advance Detected</th>
+                  <th>Payament Method</th>
+                  <th>Installment</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody class="employee_set_advance">
+                          <?php if(isset($employeea_dvance_data[0])){ 
+                            $paymentmethod ='';
+                            foreach ($employeea_dvance_data as $key => $value) {
+                              if($value->adpaymentmethod==1){
+                                $paymentmethod = 'Monthly';
+                              }else if($value->adpaymentmethod==2){
+                                $paymentmethod =	'Fortnight';
+                              }else{
+                                $paymentmethod =	'Weekly';
+                              }
+                              echo'<tr>
+                              <td>'.$value->adadvance.'</td>
+                              <td>'.$paymentmethod.'</td>
+                              <td>'.$value->adinstallment.'</td>
+                              <td>'.$value->addate.'</td>
+                            </tr>';
+                            }
+                            }?>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>#</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="modal-footer">
+          <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>

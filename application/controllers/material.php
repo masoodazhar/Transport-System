@@ -20,16 +20,18 @@ class Material extends CI_Controller {
 		$date = date('Y-m-d');
 		$this->load->model('MaterialModel');
 		$data = $this->MaterialModel->checkdateontruckatsamedateinothermaterial($id, $date);
-		
+
 		echo json_encode($data);
-	
+
 
 	}
 	public function add_material()
 	{
 		 $show_truck = $this->MaterialModel->get_truck();
+		 $show_station = $this->StationModel->fetch_data();
 		 $data=array(
 		 	'show_truck'=> $show_truck,
+		 	'show_station'=>$show_station,
             'main_content'=>'addOthermaterial'
         );
         $this->load->view('default' , $data);
@@ -46,9 +48,19 @@ class Material extends CI_Controller {
 		$this->form_validation->set_rules('tomtransporter' , 'transporter name' , 'required');
 		$this->form_validation->set_rules('tomtotalamount' , 'advance/bilty amount' , 'required');
 		$this->form_validation->set_rules('tomvfrieght' , 'v.frieght amount' , 'required');
+		$config['upload_path'] = './uploads/';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size'] = '100';
+		$config['max_width'] = '1024';
+		$config['max_height'] = '768';
+		$this->load->library('upload', $config);
+
 		if($this->form_validation->run())
 		{
 			//true
+			$this->upload->do_upload('tomimage');
+			$tomimage = $this->upload->data('file_name');
+
 			$desc = $this->input->post('toedescription');
 			$amount = $this->input->post('toeamount');
 			$serial = $this->input->post('toeidentity');
@@ -59,34 +71,23 @@ class Material extends CI_Controller {
 				$index++;
 			}
 			$last_id = $this->MaterialModel->get_last_id();
-			$data1 = array(
-				'trapdtypeid' => $this->input->post('trapdtypeid'),
-				'trapdname' => $this->input->post('trapdname'),
-				'trapdcontact' => $this->input->post('trapdcontact'),
-				'trapdamount' => $this->input->post('tomremainingamount'),
-				'trapdformid' => $last_id+1,
-				'trapddate' => $this->input->post('trapddate'),
-				'trapddescription' => $this->input->post('trapddescription'),
-			 );
-			$this->RemainModel->add_data($data1);
 			$data = $this->input->post();
 			unset($data['addmaterial']);
-			unset($data['trapdtypeid']);
-			unset($data['trapdname']);
-			unset($data['trapddate']);
-			unset($data['trapddescription']);
-			unset($data['trapdcontact']);
 			unset($data['toeamount']);
 			unset($data['toedescription']);
 			unset($data['toeidentity']);
+			$data['tomimage'] = $tomimage;
 			$this->MaterialModel->add_data($data);
+			$this->session->set_flashdata('datasaved',1);
                 redirect(base_url() . 'material/materials');
 		}
 	 else
         {
             $show_truck = $this->MaterialModel->get_truck();
+            $show_station = $this->StationModel->fetch_data();
             $data = array(
             	'show_truck'=> $show_truck,
+            	'show_station'=>$show_station,
                 "main_content" =>'addOthermaterial'
 
             );
@@ -116,7 +117,7 @@ class Material extends CI_Controller {
 	{
 
 			$material_result = $this->MaterialModel->material_detail($id);
-			
+
 
 			$data=array(
 			'serialnumber' => $serial,

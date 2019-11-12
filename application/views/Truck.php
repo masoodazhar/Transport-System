@@ -63,10 +63,10 @@
                           <td><?php echo $clear; ?></td>
                           <td><?php echo $row->tinstallmethod; ?></td>
                           <td class="td-actions text-right">
-                            <a href="<?php echo base_url().'truck/update_data/'.$row->tid ?>" rel="tooltip" class="btn btn-info">
+                            <a href="#" rel="tooltip" class="btn btn-info">
                               <i class="material-icons">edit</i>
                             </a> 
-                            <a href="<?php echo base_url().'truck/delete_record?tid='.$row->tid ?>" rel="tooltip" class="btn btn-danger">
+                            <a onclick="return confirm('Are you sure? . It may be you lose your data')" href="<?php echo base_url().'truck/delete_record?tid='.$row->tid ?>" rel="tooltip" class="btn btn-danger">
                               <i class="material-icons">delete</i>
                             </a>
                           </td>

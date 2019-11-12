@@ -3,17 +3,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Dailytrip extends CI_Controller {
 
+	public function index()
+	{
+		$show_data = $this->DailytripModel->show_data();
+		$data = array(
+			'show_data' => $show_data,
+			'main_content' => 'Dailytrip'
+		);
+		$this->load->view('default' , $data);
+	}
+
 	//shop section
 	public function add_dailytrip()
 	{
 			$id = $this->input->post('myId');
 			$show_truck = $this->TruckModel->fetch_data();
 			$show_city = $this->CityModel->fetch_data();
-			$show_station = $this->StationModel->fetch_data('*',array('tcid'=>$id));
+			$show_station = $this->StationModel->fetch_data();
 			$data=array(
 			'showtruck'=> $show_truck,
 			'showcity'=>$show_city,
-			'showstation'=>$show_station,
+			'show_station'=>$show_station,
             'main_content'=>'addDailytrip'
         );
         $this->load->view('default' , $data);
@@ -31,9 +41,18 @@ class Dailytrip extends CI_Controller {
 		$this->form_validation->set_rules('tdtotalamount' , 'advance/bilty' , 'required');
 		$this->form_validation->set_rules('tdpaydate' , 'payment date' , 'required');
 		$this->form_validation->set_rules('tdvfrieght' , 'v.frieght amount' , 'required');
+		$config['upload_path'] = './uploads/';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size'] = '100';
+		$config['max_width'] = '1024';
+		$config['max_height'] = '768';
+		$this->load->library('upload', $config);
+
 		if($this->form_validation->run())
 		{
-
+			$this->upload->do_upload('tdimage');
+			$empimage = $this->upload->data('file_name');
+			// $data['tdimage'] = $empimage;
 			$desc = $this->input->post('toedescription');
 			$amount = $this->input->post('toeamount');
 			$serial = $this->input->post('toeidentity');
@@ -44,28 +63,15 @@ class Dailytrip extends CI_Controller {
 				$index++;
 			}
 			$last_id = $this->DailytripModel->get_last_id();
-			$data1 = array(
-				'trapdtypeid' => $this->input->post('trapdtypeid'),
-				'trapdname' => $this->input->post('trapdname'),
-				'trapdcontact' => $this->input->post('trapdcontact'),
-				'trapdamount' => $this->input->post('tdremainingamount'),
-				'trapdformid' => $last_id+1,
-				'trapddate' => $this->input->post('trapddate'),
-				'trapddescription' => $this->input->post('trapddescription'),
-			 );
-			$this->RemainModel->add_data($data1);
 			$data = $this->input->post();
 			unset($data['adddailytrip']);
-			unset($data['trapdtypeid']);
-			unset($data['trapdname']);
-			unset($data['trapddate']);
-			unset($data['trapddescription']);
-			unset($data['trapdcontact']);
 			unset($data['toeamount']);
 			unset($data['toedescription']);
 			unset($data['toeidentity']);
+			$data['tdimage'] = $empimage;
+			$this->session->set_flashdata('datasaved',1);
 			$this->DailytripModel->add_data($data);
-            redirect(base_url() . 'Dailytrip/daily');
+            redirect(base_url() . 'Dailytrip');
 		}
 	 else
         {
@@ -85,7 +91,7 @@ class Dailytrip extends CI_Controller {
 
     public function daily()
     {
-        $this->add_dailytrip();
+        $this->index();
     }
 
     public function station()
@@ -107,6 +113,19 @@ class Dailytrip extends CI_Controller {
 	}
 
 	//end shop
+
+	//Delete Section
+
+    public function delete_record()
+    {
+            $id = $this->input->get('tdid');
+
+            $result = $this->DailytripModel->delete_data(array('tdid'=>$id));
+            // print_r($result);die;
+            redirect(base_url(). 'Dailytrip');
+    }
+
+    //End Delete Section
 }
 
 ?>

@@ -2,8 +2,9 @@
     <div class="content">
         <div class="container-fluid">
           <div class="row">
-            
+
             <div class="col-md-12">
+               <a href="#" data-toggle="modal" data-target="#localempty" class="btn btn-info"><i class="material-icons">add</i> ADD LOCAL/EMPTY</a>
               <div class="card ">
                 <div class="card-header card-header-rose card-header-text">
                   <div class="card-text">
@@ -11,7 +12,7 @@
                   </div>
                 </div>
                 <div class="card-body ">
-                  <form class="form-horizontal comissionform dailycomissionform" method="POST" id="comissionform" action="<?php echo base_url()?>Dailytrip/dailytrip_validation">
+                  <form class="form-horizontal comissionform dailycomissionform" method="POST" id="comissionform" action="<?php echo base_url()?>Dailytrip/dailytrip_validation" enctype="multipart/form-data">
 
                 <div class="row">
 
@@ -29,16 +30,19 @@
                             <select class="selectpicker dailytriptruckid" data-style="select-with-transition" title="Choose Truck" data-size="5" name="tid" tabindex="-98">
                               <?php if(count($showtruck) > 0) { foreach ($showtruck as $trow) {
                                 echo '<option value="'.$trow->tid.'">'.$trow->tnumber.'</option>';
-                              }} ?> 
+                              }} ?>
                           </select>
                           <span class="text-danger"><?php echo form_error('tid'); ?></span>
                    </div>
                   </div>
-
+                  <?php
+                  $now = new DateTime();
+                  ?>
+                  <input type="hidden" name="" class="currentdate" value="<?=$now->format('Y-m-d');?>">
                   <a class="my-2" href="#" id="<?=base_url()?>truck/add_truck" title="Add new truck" onclick="openWin(this.id);"><i class="material-icons">add_circle</i></a>
 
                 </div>
- 
+
                 <div class="row">
 
                   <div class="col-md-1"></div>
@@ -65,32 +69,37 @@
                 <div class="row">
 
                   <div class="col-md-1"></div>
-                  
+
                   <div class="col-sm-6">
                    <div class="form-group">
                             <select class="selectpicker tocity" data-style="select-with-transition" title="Choose To City" name="tcid" data-size="5" tabindex="-98">
-                            <?php 
-                            if(count($showcity) > 0) 
-                              { 
-                                foreach ($showcity as $tocrow) 
+                            <?php
+                            if(count($showcity) > 0)
+                              {
+                                foreach ($showcity as $tocrow)
                                 {
                                   if(ucfirst($tocrow->tcname) != "Karachi")
                                   {
                                   echo '<option value="'.$tocrow->tcid.'">'.$tocrow->tcname.'</option>';
                                 }
                               }
-                            } 
-                            ?> 
+                            }
+                            ?>
                           </select>
                           <span class="text-danger"><?php echo form_error(' tcid'); ?></span>
                    </div>
-                  </div> 
-                  <a class="my-2" href="<?php echo base_url()?>city/add_city" target="_blank" title="Add new city"><i class="material-icons">add_circle</i></a>                 
+                  </div>
+                  <a class="my-2" href="<?php echo base_url()?>city/add_city" target="_blank" title="Add new city"><i class="material-icons">add_circle</i></a>
 
-                  <div class="col-sm-4 my-2">
+                  <div class="col-sm-4">
                    <div class="form-group">
-                            <select class="tostation" data-style="select-with-transition" title="Choose Station" name="tstid" data-size="5" tabindex="-98" style="width: 90%; border: none; border-bottom: 1px solid #ccc;">
-                              <OPTION>Choose Station</OPTION>
+                            <select class="selectpicker" data-style="select-with-transition" title="Choose Station" name="tstid" data-size="5" tabindex="-98">
+                              <?php
+                               foreach ($show_station as $srow)
+                               {
+                                 echo '<option value="'.$srow->tstid.'">'.$srow->tstname.'</option>';
+                               }
+                              ?>
                           </select>
                           <span class="text-danger"><?php echo form_error('tstid'); ?></span>
                    </div>
@@ -118,7 +127,7 @@
                  <div class="col-md-4">
                   <div class="form-group">
                    <label class="bmd-label-floating text-uppercase">Cheaque</label>
-                   <input type="text" class="form-control tdcheaque" name="tdcheaque" value="<?php echo set_value('tdcheaque'); ?>">
+                   <input type="number" class="form-control tdcheaque" name="tdcheaque" value="<?php echo set_value('tdcheaque'); ?>">
                   </div>
                  </div>
 
@@ -185,7 +194,7 @@
                     <input type="number" class="form-control tdadvcomission" name="tdadvcomission" value="<?php echo set_value('tdadvcomission'); ?>">
                    </div>
                  </div>
-                  
+
                   <div class="col-sm-3">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">commission pending</label>
@@ -211,8 +220,8 @@
                     <input type="number" class="form-control tdexweight" name="tdexweight" value="<?php echo set_value('tdexweight'); ?>">
                    </div>
                   </div>
-                  
-                  
+
+
                   <div class="col-sm-3">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">unloading</label>
@@ -230,7 +239,7 @@
                   </div>
 
                   <div class="row">
-                  
+
                   <div class="col-md-1"></div>
                   <div class="col-sm-3">
                    <div class="form-group">
@@ -256,19 +265,19 @@
                   </div>
 
                   <div class="row">
-                  
+
                   <div class="col-md-1"></div>
                   <div class="col-sm-3">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">description</label>
-                    <input type="text" class="form-control" name="toedescription[]" value="<?php echo set_value('toedescription'); ?>">
+                    <input type="text" class="form-control" name="toedescription[]" >
                    </div>
                   </div>
 
                   <div class="col-sm-3 toeamountparent">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label>
-                    <input type="number" class="form-control toeamount" name="toeamount[]" value="<?php echo set_value('toeamount'); ?>">
+                    <input type="number" class="form-control toeamount" name="toeamount[]">
                    </div>
                   </div>
 
@@ -298,15 +307,13 @@
                    <input type="text" class="form-control datepicker" name="tdpaymetndate" value="<?php echo set_value('tdpaymetndate'); ?>">
                   </div>
                  </div>
-                  
+
                   <div class="col-sm-4">
                    <div class="form-group">
                     <label for="exampleEmail" class="text-uppercase">Balance</label>
                     <input type="text" class="form-control tdremainingamount" name="tdremainingamount" readonly="readonly" value="<?php echo set_value('tdremainingamount'); ?>">
                    </div>
                   </div>
-
-                  <a href="#"  data-toggle="modal" data-target="#comissionremain" class="my-2" title="Add details"><i class="material-icons">add_circle</i></a>
 
                   </div>
 
@@ -338,7 +345,7 @@
                           <span class="btn btn-round btn-rose btn-file">
                             <span class="fileinput-new">Add Photo</span>
                             <span class="fileinput-exists">Change</span>
-                            <input type="hidden" value="" name="tdimage"><input type="file" name="" class="form-control">
+                            <input type="hidden" value="" name="tdimage"><input type="file" name="tdimage" class="form-control">
                           <div class="ripple-container"></div></span>
                           <br>
                           <a href="extended.html#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i> Remove<div class="ripple-container"><div class="ripple-decorator ripple-on ripple-out" style="left: 45.6719px; top: 21.7813px; background-color: rgb(255, 255, 255); transform: scale(15.5098);"></div></div></a>
@@ -355,11 +362,11 @@
                 </div>
 
                 <!-- Classic Modal -->
-                      <div class="modal fade" id="comissionremain" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal fade" id="localempty" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h3 class="modal-title">Remaining Amount Detail</h3>
+                              <h3 class="modal-title">LOCAL TRIP</h3>
                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                 <i class="material-icons">clear</i>
                               </button>
@@ -368,36 +375,52 @@
                               <div class="row">
                                 <div class="col-md-6">
                                   <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Concern Person</label>
-                                    <input type="text" class="form-control trapdname" id="trapdname" name="trapdname">
+                                    <label for="exampleEmail" class="bmd-label-floating">Frieght</label>
+                                    <input type="text" class="form-control localfrieght" name="localfrieght">
                                   </div>
                                 </div>
                                 <div class="col-md-6">
                                   <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Contact</label>
-                                    <input type="text" value="" class="form-control" name="trapdcontact" id="totalprice">
+                                    <label for="exampleEmail" class="bmd-label-floating">Station</label>
+                                    <input type="text" class="form-control" name="localstation">
                                   </div>
                                 </div>
                                 </div>
                                 <div class="row">
                                 <div class="col-md-12">
                                   <div class="form-group">
-                                    <label for="exampleEmail" class="">Return Date</label>
-                                    <input type="text" class="form-control datepicker" name="trapddate">
+                                    <label for="exampleEmail" class="">Date</label>
+                                    <input type="text" class="form-control datepicker" name="localdate">
                                   </div>
                                 </div>
+                              </div>
+
+                              <hr style="border: 1px solid black;">
+                              <h3 class="text-center"> EMPTY CONTAINER</h3>
+
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="exampleEmail" class="bmd-label-floating">Frieght</label>
+                                    <input type="text" class="form-control emptyfrieght" name="emptyfrieght">
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="exampleEmail" class="bmd-label-floating">Station</label>
+                                    <input type="text" class="form-control" name="emptystation">
+                                  </div>
+                                </div>
+                                </div>
+                                <div class="row">
                                 <div class="col-md-12">
                                   <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Description</label>
-                                    <textarea class="form-control" name="trapddescription"></textarea>
+                                    <label for="exampleEmail" class="">Date</label>
+                                    <input type="text" class="form-control datepicker" name="emptydate">
                                   </div>
                                 </div>
-                                <div class="col-md-12">
-                                  <div class="form-group">
-                                    <input type="hidden" class="form-control" name="trapdtypeid" value="commission-0">
-                                  </div>
-                                </div>
-                                </div>
+                              </div>
+
                               </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-success" data-dismiss="modal">Done</button>
@@ -411,7 +434,7 @@
                 </div>
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@
                   </div>
                 </div>
                 <div class="card-body ">
-                <form class="form-horizontal" id="tripform" method="POST" action="<?=base_url()?>trip/summary_validation">
+                <form class="form-horizontal tripform-last" id="tripform" method="POST" action="<?=base_url()?>trip/summary_validation">
 
                 <div class="row">                  
                   <div class="col-sm-1"></div>
@@ -83,12 +83,13 @@
                    </div>
                   </div>
 
-                  <a href="<?php echo base_url()?>truck/add_truck" class="my-4 related-widget-wrapper-link"  title="Add new truck" ><i class="material-icons ">add_circle</i></a>
+                  <a href="<?php echo base_url()?>truck/add_truck" class="my-4" target="_blank" title="Add new truck"><i class="material-icons">add_circle</i></a>
 
                   <div class="col-sm-3">
                    <div class="form-group">
                     <label for="exampleEmail" class="text-uppercase">Station</label>
-                    <input type="text" class="form-control tostation" readonly="readonly" name="ttdstation">
+                    <input type="text" class="form-control tostation" readonly="readonly">
+                    <input type="hidden" class="form-control tostationid" readonly="readonly" name="ttdstation">
                    </div>
                   </div>
                 
@@ -158,9 +159,14 @@
                   <div class="col-sm-1"></div>
                   <div class="col-sm-3">
                     <div class="form-group">
-                    <select class="tostation" data-style="select-with-transition" title="Choose station" name="tstid" data-size="5" tabindex="-98" style="width: 90%; border: none; border-bottom: 1px solid #ccc;">
-                            <option class="text-uppercase">Choose Station</option>
-                          </select>
+                    <select class="selectpicker" data-style="select-with-transition" title="Choose station" name="tstid" data-size="5" tabindex="-98">
+                      <?php
+                        foreach ($showstation as $transport) 
+                        {
+                          echo '<option value="'.$transport->tstid.'">'.$transport->tstname.'</option>';
+                        }
+                      ?>
+                    </select>
                           
                           <span class="text-danger"><?php echo form_error('tstid'); ?></span>
                     </div>
@@ -352,14 +358,14 @@
                     <div class="col-sm-3">
                      <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">Description</label>
-                    <input type="text" class="form-control" name="toedescription[]" value="<?php echo set_value('toedescription'); ?>">
+                    <input type="text" class="form-control" name="toedescription[]" value="<?php //echo set_value('toedescription'); ?>">
                      </div>
                     </div>
 
                    <div class="col-sm-3">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label>
-                    <input type="text" class="form-control toeamount" name="toeamount[]" value="<?php echo set_value('toeamount'); ?>">
+                    <input type="text" class="form-control toeamount" name="toeamount[]" value="<?php //echo set_value('toeamount'); ?>">
                    </div>
                   </div>
 
@@ -382,8 +388,6 @@
                       <input type="number" class="form-control trremainingamount" name="trremainingamount" readonly="readonly" value="<?php echo set_value('trremainingamount'); ?>">
                      </div>
                     </div>
-
-                    <a href="#" data-toggle="modal" data-target="#retripremain" class="my-2" title="Add details"><i class="material-icons">add_circle</i></a>
 
                       <div class="col-sm-3">
                      <div class="form-group">
@@ -420,26 +424,23 @@
                   <div class="col-sm-2">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">Diesel In liter</label>
-                    <input type="Number" class="form-control ttddieselliter" name="tpdliter[]" value="<?php echo set_value('tpdliter'); ?>">
+                    <input type="Number" class="form-control ttddieselliter" name="tpdliter[]" value="<?php //echo set_value('tpdliter'); ?>">
                    </div>
                   </div>
 
                   <div class="col-sm-2">
                    <div class="form-group">
-                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label>
-                    <input type="Number" class="form-control ttddieselprice" name="tpdamount[]" value="<?php echo set_value('tpdamount'); ?>">
+                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Total Amount</label>
+                    <input type="Number" class="form-control ttddieselprice" name="tpdamount[]" value="<?php //echo set_value('tpdamount'); ?>">
                    </div>
                   </div>
 
-                  <input type="hidden" id="prliteramount" name="tpdprliteramount[]" value="<?php echo set_value('tpdprliteramount'); ?>">
+                  <input type="hidden" id="prliteramount" name="tpdprliteramount[]" value="<?php //echo set_value('tpdprliteramount'); ?>">
 
                   <div class="col-sm-3">
                    <div class="form-group pmpstatus">
-                    <select class="form-control" data-style="select-with-transition" data-size="5" name="tpdpaymentstatus[]" tabindex="-98">
-                     <option>CHOOSE STATUS</option>
-                     <option value="paid">Paid</option>
-                     <option value="pending">Pending</option>
-                    </select>
+                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Paid Amount</label>
+                    <input type="number" class="form-control" name="tpdpaidamount[]" value="<?php //echo set_value('tpdpaidamount'); ?>">
                    </div>
                   </div>
 
@@ -508,7 +509,7 @@
                   <div class="col-sm-1"></div>
                   <div class="col-sm-3">
                    <div class="form-group">
-                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Truck maintainance</label>
+                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">M.K Autos</label>
                     <input type="number" class="form-control ttdtmaintainance" name="ttdtmaintainance">
                    </div>
                   </div>
@@ -888,7 +889,7 @@
                   <div class="col-sm-3">
                    <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label>
-                    <input type="number" class="form-control toeamount" name="toeamount[]" value="">
+                    <input type="number" class="form-control toeamountlast" name="toeamount[]" value="">
                    </div>
                   </div>
 
@@ -928,109 +929,11 @@
 
                </div>
 
-               <div class="row">
-
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                   <div class="form-group">
-                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Tyre Bought</label>
-                    <input type="number" class="form-control" name="ttdtyrebought" >
-                   </div>
-                 </div>
-
-                  <div class="col-sm-3">
-                   <div class="form-group">
-                    <label for="exampleEmail" class="bmd-label-floating text-uppercase">Tyre sell</label>
-                    <input type="number" class="form-control" name="ttdtyresell" >
-                   </div>
-                 </div>
-
-               </div>
-
-               <div class="row">
-
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                   <div class="form-group">
-                    <label for="exampleEmail" class="text-uppercase">Total income</label>
-                    <input type="number" class="form-control totalincome" readonly="readonly" name="ttdtotalincometwo" value="0">
-                   </div>
-                 </div>
-
-                  <div class="col-sm-3">
-                   <div class="form-group">
-                    <label for="exampleEmail" class="text-uppercase">Total Expense</label>
-                    <input type="number" class="form-control totalexpense" name="ttdtotalexpensetwo" readonly="readonly" >
-                   </div>
-                 </div>
-
-                  <div class="col-sm-4">
-                   <div class="form-group">
-                    <label for="exampleEmail" class="text-uppercase">Savings</label>
-                    <input type="number" class="form-control savings" name="ttdtotalsavings" readonly="readonly" >
-                   </div>
-                 </div>
-
-               </div>
-
               </div>
                   <div class="modal-footer justify-content-center">
                 <input type="submit" class="btn btn-info btn-round" name="addtripsummary" data-dismiss="modal">
                 <a href="<?=base_url()?>trip" class="btn btn-danger btn-round">close</a>
               </div>
-
-               <!-- Classic Modal -->
-                      <div class="modal fade" id="retripremain" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h3 class="modal-title">Remaining Amount Detail</h3>
-                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                <i class="material-icons">clear</i>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Concern Person</label>
-                                    <input type="text" value="" class="form-control" id="trapdname" name="trapdname">
-                                  </div>
-                                </div>
-                                <div class="col-md-6">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Contact</label>
-                                    <input type="text" value="" class="form-control" name="trapdcontact" id="totalprice">
-                                  </div>
-                                </div>
-                                </div>
-                                <div class="row">
-                                <div class="col-md-12">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="">Return Date</label>
-                                    <input type="text" class="form-control datepicker" name="trapddate">
-                                  </div>
-                                </div>
-                                <div class="col-md-12">
-                                  <div class="form-group">
-                                    <label for="exampleEmail" class="bmd-label-floating">Description</label>
-                                    <textarea class="form-control" name="trapddescription"></textarea>
-                                  </div>
-                                </div>
-                                <div class="col-md-12">
-                                  <div class="form-group">
-                                    <input type="hidden" class="form-control" name="trapdtypeid" value="return-0">
-                                  </div>
-                                </div>
-                                </div>
-                              </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-success" data-dismiss="modal">Done</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!--  End Modal -->
 
                 </form>
                </div>

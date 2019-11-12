@@ -7,12 +7,10 @@ class Tyre extends CI_Controller {
 
 	public function index()
 	{
-		$row =$this->TyreModel->fetch_data();
-		$result =$this->ShopModel->fetch_data();
+		$row =$this->TyreModel->shop_remaining();
 		 $data=array(
 		 	'tyre_data'=>$row,
-		 	'shop'=>$result,
-            'main_content'=>'tyre'
+            'main_content'=>'Tyre'
         );
         $this->load->view('default' , $data);
 	}
@@ -42,7 +40,7 @@ class Tyre extends CI_Controller {
 			$data = $this->input->post();
 			unset($data['addtyre']);
 			$this->TyreModel->add_data($data);
-                redirect(base_url() . 'tyre');
+                redirect(base_url() . 'Tyre');
 		}
 	 else
         {
@@ -71,9 +69,31 @@ class Tyre extends CI_Controller {
 
             $result = $this->TyreModel->delete_data(array('ttid'=>$id));
             // print_r($result);die;
-            redirect(base_url(). 'tyre');
+            redirect(base_url(). 'Tyre');
     }
 	//End delete data
+
+	public function get_single_detail()
+	{
+		$id = $this->input->post('id');
+		$result = $this->TyreModel->shop_single_remaining($id);
+		$tr = '';
+
+		foreach ($result as $key => $value) {
+			$tr .='
+
+								<tr>
+                                  <td id="shop">'.$value->tsname.'</td>
+                                  <td class="pair">'.$value->tttyrepair.'</td>
+                                  <td class="amount">'.$value->tttotalprice.'</td>
+                                  <td class="paid">'.$value->ttpaid.'</td>
+                                  <td class="remaining">'.$value->ttremaining.'</td>
+                                  <td class="Date">'.$value->crnt_date.'</td>
+                                </tr>
+			';
+		}
+		echo $tr;
+	}
 }
 
 ?>

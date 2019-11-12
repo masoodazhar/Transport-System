@@ -1,69 +1,186 @@
-// function abc()
-//   {
-//     var get = $('.arv').val();
-//     $('.arive').val(get);
-//   }
-
-//   var myWindow;
-
-//   function openWin(linke) {
-//     myWindow = window.open(linke, "myWindow", "width=1000,height=1000");
-
-//     console.log( myWindow.parent);
-//   }
-function id_to_windowname(text) {
-  text = text.replace(/\./g, '__dot__');
-  text = text.replace(/\-/g, '__dash__');
-  return text;
-}
-function showAdminPopup(triggeringLink, name_regexp, add_popup) {
-  var name = triggeringLink.id.replace(name_regexp, '');
-  name = id_to_windowname(name);
-  var href = triggeringLink.href;
-  if (add_popup) {
-      if (href.indexOf('?') === -1) {
-          href += '?_popup=1';
-      } else {
-          href += '&_popup=1';
-      }
+function abc()
+  {
+    var get = $('.arv').val();
+    $('.arive').val(get);
   }
-  var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-  win.focus();
-  return false;
-}
 
-// window.removeEventListener("message", receiveMessage);
-function showRelatedObjectPopup(triggeringLink) {
-  return showAdminPopup(triggeringLink, /^(change|add|delete)_/, false);
-}
+  
+  function print_dailyexpence() {
+   
+    var content = document.getElementById('print_dailyexpence_page').innerHTML;
+    var mywindow = window.open('', 'Print', 'height=600,width=800');
 
+    mywindow.document.write('<html><head><title>Print</title>');
+    mywindow.document.write('</head><body >');
+    mywindow.document.write(content);
+    mywindow.document.write('</body></html>');
+
+    mywindow.document.close();
+    mywindow.focus()
+    mywindow.print();
+    mywindow.close();
+    return true;
+}
 $(document).ready(function (){
+    
+  var ltweight = 0;
+  var ltrateparton = 0;
+  var ltrateparton = 0;
 
+  $('.ltweight , .ltrateparton').keyup(function(){
 
- 
-  // $('.related-widget-wrapper-link').click(function(e) {
-  //   e.preventDefault();
-  //   // if (this.href) {
-  //   //     var event = $.Event('django:show-related', {href: this.href});
-  //   //     $(this).trigger(event);
-  //   //     if (!event.isDefaultPrevented()) {
-  //   //         showRelatedObjectPopup(this);
-  //   //     }
-  //   // }
-  //   alert();
-  // });
+      ltweight = $.trim($('.ltweight').val());
+      ltweight = parseInt(ltweight==''?0:ltweight);
 
-  $('body').delegate('.related-widget-wrapper-link','click', function(e) {
-    e.preventDefault();
-    if (this.href) {
-        var event = $.Event('django:show-related', {href: this.href});
-        $(this).trigger(event);
-        if (!event.isDefaultPrevented()) {
-            showRelatedObjectPopup(this);
-           
-        }
+      ltrateparton = $.trim($('.ltrateparton').val());
+      ltrateparton = parseInt(ltrateparton==''?0:ltrateparton);
+
+      lttotalamount = ltweight*ltrateparton;
+
+      $('.lttotalamount').val(lttotalamount);
+
+  });
+  
+
+  $('.stillremainingamount_of_truck_typing').keyup(function(){
+    var still_remain_truck = $.trim($('.stillremainingamount_of_truck').text());
+    still_remain_truck = parseInt(still_remain_truck==''?0:still_remain_truck);
+
+    typing_value = $.trim($(this).val());
+    typing_value = parseInt(typing_value==''?0:typing_value);
+    // alert("typed: "+typing_value + " remaing: "+still_remain_truck);
+    if(typing_value>still_remain_truck){
+     
+      $(this).val(still_remain_truck);
+      $('.setremainamount').text(still_remain_truck);
+      $('.settypedamount').text(typing_value);
+      $('.show-error').fadeIn();
+    }else{
+     
+      $('.show-error').fadeOut('slow');
     }
   });
+
+
+$('.typetruckname').keyup(function(){
+    tname = $(this).val();
+    var url = base_url+'Truck/checktruck';
+    $.ajax({
+      url: url,
+      type:'POST',
+      data:{tname:tname},
+      success:function(data){
+       
+        if(data==1){
+          $('.tsubmitsuccess').prop('type','button');
+          $('.tsubmitsuccess').hide();
+          $('.tsubmiterror').show();
+        }else{
+          $('.tsubmitsuccess').prop('type','submit');
+          $('.tsubmitsuccess').show();
+          $('.tsubmiterror').hide();
+        }
+      }
+    });
+
+});
+
+  $('.view').click(function(){
+    id = $(this).data('id');
+    // alert(base_url+'tyre/get_single_detail');
+    $.ajax({
+     type: 'POST',
+     data: {id:id},
+     url: base_url+'tyre/get_single_detail',
+     success: function(data){
+        $('.setdata').html(data);
+     }
+    });
+  });
+
+  $('.oil_view').click(function(){
+    id = $(this).data('id');
+    // alert(base_url+'oil/get_single_detail');
+    $.ajax({
+     type: 'POST',
+     data: {id:id},
+     url: base_url+'oil/get_single_detail',
+     success: function(data){
+      // alert(data);
+      $('.setdata').html(data);
+     }
+    });
+  });
+
+  $('.pump_view').click(function(){
+    id = $(this).data('id');
+    // alert(base_url+'pumpdetail/get_single_detail');
+    $.ajax({
+     type: 'POST',
+     data: {id:id},
+     url: base_url+'pumpdetail/get_single_detail',
+     success: function(data){
+      // alert(data);
+      $('.setdata').html(data);
+     }
+    });
+  }); 
+
+  $('.get_truck_maintain').click(function(){
+    var id = $(this).next('input').val();
+    var url = base_url+'main/get_truck_maintainance';
+   
+    $.ajax({
+      url:url,
+      method:'POST',
+      data:{id:id},
+      success:function(data){
+   
+        data = JSON.parse(data);
+        $('.tmtruck').text(data.tnumber==null?'':data.tnumber);
+        $('.tmdriver').text(data.tname==null?'No Driver':data.tname);
+        $('.tmoil').text(data.toname=='null'?'No Oil Change':data.toname);
+        $('.tmoiltotal').text(data.tmot_amount==''?0:data.tmot_amount);
+        $('.tmoilpaid').text(data.tmop_amount==''?'0':data.tmop_amount);
+        $('.tmoilremaining').text(data.tmor_amount==''?0:data.tmor_amount);
+        $('.tmtyre').text(data.ttname==''?'No Tyre Change':data.ttname);
+        $('.tmtyretotal').text(data.tmtt_amount==''?0:data.tmtt_amount);
+        $('.tmtyrepaid').text(data.tmtp_amount==''?0:data.tmtp_amount);
+        $('.tmtyreremaining').text(data.tmtr_amount);
+        $('.tmother').text(data.tmodescripiton==''?'No Other Work':data.tmodescripiton);
+        $('.tmothershop').text(data.tsname==''?'No Shop':data.tsname);
+        $('.tmothertotal').text(data.tmototal_amount==''?0:data.tmototal_amount);
+        $('.tmotherpaid').text(data.tmtop_amount==''?0:data.tmtop_amount);
+        $('.tmotherremaining').text(data.tmtor_amount==''?0:data.tmtor_amount);
+   
+      }
+    });
+   });
+   
+                        $('select.othermaterialtruckids').change(function(){
+                          var  id = $(this).children("option:selected").val();
+                          // alert(id);
+                          var url = base_url+'material/checkdateontruckatsamedateinothermaterial';
+                          var redirect = base_url+'material/add_material';
+                          
+                          $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: {id:id},
+                            success:function(data){
+                              
+                             data = JSON.parse(data);
+                             
+                             if(data.tomcurrentdate==0){
+                            
+                              
+                             }else{
+                              alert('Truck is already available on same date.');
+                              window.location.assign(redirect);
+                             }
+                            }
+                          });
+                      });
 
 	//Add truck start///////////////////////////////////////////
 
@@ -112,39 +229,101 @@ $(document).ready(function (){
 
 
         
-	      $('#returnform').on('submit' , function(){
-	      	var trapdname = $('.trapdname').val();
-	        if($('.trremainingamount').val() > 0 && trapdname === '')
-	        {
-	          $('#retripremain').modal('show');
-	          return false;
-	        }
-	        else
-	        {
-	          return true;
-	        }
-	      });
+	      // $('#returnform').on('submit' , function(){
+	      // 	var trapdname = $('.trapdname').val();
+	      //   if($('.trremainingamount').val() > 0 && trapdname === '')
+	      //   {
+	      //     $('#retripremain').modal('show');
+	      //     return false;
+	      //   }
+	      //   else
+	      //   {
+	      //    return true;
+	      //   }
+	      // });
 
         //Add truck End///////////////////////////////////////////
 
         //Add tyre start////////////////
+        var tyre_remain = 0;
+        var qpair = 0;
+        var paid = 0;
+        var paidamount = 0;
+        var totalamount = 0;
 
-        $('.perprice').on('keyup',  function () {
-          var qpair = $('.qpair').val();
-          paid = $(this).val();
-          $('.tprice').val(parseInt(qpair*paid));
-          // alert(totalprice-paid);
+        $('.perprice, .qpair').on('keyup',  function () {
+          qpair = $.trim($('.qpair').val());
+          qpair = parseInt(qpair==''?0:qpair);
+
+          paid = $.trim($('.perprice').val());
+          paid = parseInt(paid==''?0:paid);
+          
+          $('.tprice').val(qpair*paid);
+
+          paidamount = $.trim($('.ttpaid').val());
+          paidamount = parseInt(paidamount==''?0:paidamount);
+
+          totalamount = $.trim($('.tprice').val());
+          totalamount = parseInt(totalamount==''?0:totalamount);
+
+          tyre_remain = totalamount-paidamount;
+
+          $('.ttremaining').val(tyre_remain);
+        });
+
+        $('.ttpaid').keyup(function(){
+          paidamount = $.trim($('.ttpaid').val());
+          paidamount = parseInt(paidamount==''?0:paidamount);
+
+          totalamount = $.trim($('.tprice').val());
+          totalamount = parseInt(totalamount==''?0:totalamount);
+
+          tyre_remain = totalamount-paidamount;
+          
+          $('.ttremaining').val(tyre_remain);
         });
 
         //add tyre end////////////////
 
         //add oil start//////////////
+        var toquantity = 0;
+        var tototalprice = 0;
+        var price_gallon = 0;
+        var topaid = 0;
+        var oilremain = 0;
 
-        $('.tototalprice').on('keyup',  function () {
-          var quantity = $('.toquantity').val();
-          tototalprice = $(this).val();
-          $('.topricegallon').val(parseInt(tototalprice/quantity));
+        $('.tototalprice , .toquantity').keyup(function () {
+
+          toquantity = $.trim($('.toquantity').val());
+          toquantity = parseInt(toquantity==''?0:toquantity);
+
+          tototalprice = $.trim($('.tototalprice').val());
+          tototalprice = parseInt(tototalprice==''?0:tototalprice);
+
+          if(toquantity != 0 && tototalprice != 0)
+          {
+            price_gallon = tototalprice / toquantity;
+          }
+          else
+          {
+            price_gallon = 0;
+          }
+          $('.topricegallon').val(price_gallon);
           // alert(totalprice-paid);
+        });
+
+        $('.topaid , .tototalprice').keyup(function(){
+
+          tototalprice = $.trim($('.tototalprice').val());
+          tototalprice = parseInt(tototalprice==''?0:tototalprice);
+
+          topaid = $.trim($('.topaid').val());
+          topaid = parseInt(topaid==''?0:topaid);
+
+          oilremain = tototalprice-topaid;
+
+          $('.toremaining').val(oilremain);
+
         });
 
         //add oil end///////////////
@@ -209,130 +388,6 @@ $(document).ready(function (){
 
 
 
-
-
-      
-//=====================================START OF DAILY TRIP INFORMATION====================================
-      
-
-      //  var allfields =0;
-      //  var tdvfrieght =0;
-      //  var tdadvcomission =0;
-      //  var tdpaidcomission =0;
-      //  var tdcustom =0;
-      //  var tdincometax =0;
-      //  var tdunloading =0;
-      //  var tdinam =0;
-      //  var tddehari =0;
-      //  var tdemptycontainer =0;
-      //  var tdmushiana =0;
-      //  var tdrecieveamount =0;
-      //  var advancebilty = 0;
-      //  var remaining = 0;
-      //  var comisionsum=0;
-      //  var tdbrokery=0;
-
-      // $('.tdvfrieght, .tdadvcomission, .tdbrokery, .tdtotalamount, .tdpendcomission, .tdcustom , .tdincometax, .tdunloading, .tdinam, .tddehari, .tdemptycontainer , .tdmushiana , .tdrecieveamount').keyup(function(){
-        
-      //   advancebilty = $.trim($('.tdtotalamount').val());
-      //   advancebilty = parseInt(advancebilty==''?0:advancebilty);
-
-      //   tdvfrieght = $.trim($('.tdvfrieght').val());
-      //   tdvfrieght = parseInt(tdvfrieght==""?0:tdvfrieght);
-
-      //   tdadvcomission = $.trim($('.tdadvcomission').val());
-      //   tdadvcomission = parseInt(tdadvcomission==""?0:tdadvcomission);
-
-      //   tdpendcomission = $.trim($('.tdpendcomission').val());
-      //   tdpendcomission = parseInt(tdpendcomission==""?0:tdpendcomission);
-
-      //   tdcustom = $.trim($('.tdcustom').val());
-      //   tdcustom = parseInt(tdcustom==""?0:tdcustom);
-
-      //   tdincometax = $.trim($('.tdincometax').val());
-      //   tdincometax = parseInt(tdincometax==""?0:tdincometax);
-        
-      //   tdunloading = $.trim($('.tdunloading').val());
-      //   tdunloading = parseInt(tdunloading==""?0:tdunloading);
-
-      //   tdinam = $.trim($('.tdincometax').val());
-      //   tdinam = parseInt(tdinam==""?0:tdinam);
-
-      //   tddehari = $.trim($('.tddehari').val());
-      //   tddehari = parseInt(tddehari==""?0:tddehari);
-
-      //   tdemptycontainer = $.trim($('.tdemptycontainer').val());
-      //   tdemptycontainer = parseInt(tdemptycontainer==""?0:tdemptycontainer );
-
-      //   tdmushiana = $.trim($('.tdmushiana').val());
-      //   tdmushiana = parseInt(tdmushiana==""?0:tdmushiana);
-
-      //   tdrecieveamount = $.trim($('.tdrecieveamount').val());
-      //   tdrecieveamount = parseInt(tdrecieveamount==""?0:tdrecieveamount);
-
-      //   comisionsum = $.trim($('.comisionsum').val());
-      //   comisionsum = parseInt(comisionsum==""?0:comisionsum);
-
-      //   tdbrokery = $.trim($('.tdbrokery').val());
-      //   tdbrokery = parseInt(tdbrokery==""?0:tdbrokery);
-        
-      //   allfields = tdvfrieght+tdadvcomission+tdpendcomission+tdcustom+tdincometax+tdunloading+tdinam+tddehari+tdemptycontainer+tdmushiana+tdrecieveamount+tdbrokery;
-        
-      //   remaining = advancebilty>0?advancebilty-allfields:allfields;
-        
-        
-      //   $('.tdremainingamount').val(remaining-comisionsum);
-
-      //   if(remaining > 0)
-      //   {
-      //   	$('.tdpaymentstatus').val('Pending');
-      //   }
-      //   else if(remaining < 0)
-      //   {
-      //   	$('.tdpaymentstatus').val('Remaining');
-      //   }
-      //   else
-      //   {
-      //   	$('.tdpaymentstatus').val('Paid');
-      //   }
-      // });
-
-
-      // =========================== START AFTER PLUS SIGN CALCULATION ======================
-          //     var $form = $('.comissionform');
-      	  //     var rem_val = 0;
-          //     var comisionsum = 0;
-          //     var total = 0;
-          //     var toeamount = 0;
-
-          //     $form.delegate('.toeamount', 'change', function (e)
-          //     {
-          //       comisionsum =parseInt($('.comisionsum').val());
-
-          //           e.stopImmediatePropagation();
-
-          //           total = 0;
-          //           $('.toeamount').each(function(){
-
-          //            toeamount =  $.trim($(this).val());
-          //            toeamount = parseInt(toeamount==''?0:toeamount);
-          //            total +=toeamount;
-          //           });
-
-          //           $('.comisionsum').val(total);
-                  
-          //         remainings = parseInt(remaining)-parseInt($('.comisionsum').val());
-
-                 
-
-          //         $('.tdremainingamount').val(remainings);
-          //         $('.trdateofpay').val(remainings);
-          //         $('.trremainingamount').val(remaining);
-              
-          // });
-
-          
-      // =========================== END AFTER PLUS SIGN CALCULATION ======================
         
         base_url = $('body').prop('class');
       $('select.tocity').change(function(){
@@ -357,197 +412,9 @@ $(document).ready(function (){
         });
 
        $('.add_comission').on('click',function(){
-          $('.add_comissions').append('<div class="row"><div class="col-md-1"></div><div class="col-md-3"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">description</label><input type="text" class="form-control" name="toedescription[]" value=""></div></div><div class="col-sm-4 toeamountparent"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="number" class="form-control toeamount" name="toeamount[]" value=""></div></div><input type="hidden" class="form-control" name="toeidentity[]" value="comission-0"><a href="#" class="remove_comission my-2" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
+          $('.add_comissions').append('<div class="row"><div class="col-md-1"></div><div class="col-md-3"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">description</label><input type="text" class="form-control" name="toedescription[]" value=""></div></div><div class="col-sm-3 toeamountparent"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="number" class="form-control toeamount" name="toeamount[]" value=""></div></div><input type="hidden" class="form-control" name="toeidentity[]" value="comission-0"><a href="#" class="remove_comission my-2" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
         });
-        // $('.add_comission').on('click',function(){
-        //   $('.add_comissions').append('<div class="row"><div class="col-md-1"></div><div class="col-md-3"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">description</label><input type="text" class="form-control" name="toedescription[]" value=""></div></div><div class="col-sm-4 toeamountparent"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="number" class="form-control toeamount" name="toeamount[]" value=""></div></div><input type="hidden" class="form-control" name="toeidentity[]" value="comission-0"><a href="#" class="remove_comission my-2" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
-        // });
 
-//=======================================START REMOVING THE EXTRA TEXTBOX CALCULATION INFORMATION=====================================
-     
-      //  $('div.add_comissions').delegate('a.remove_comission' ,'click', function(){
-      //     toeamount = $.trim($(this).siblings('.toeamountparent').find('input.toeamount').val());
-      //     toeamount = parseInt(toeamount==''?0:toeamount);
-      //     total -=toeamount;
-      //     alert(toeamount)
-      //     $('.comisionsum').val(total);
-                  
-      //   	remainings = parseInt(remaining)-parseInt($('.comisionsum').val());
-      //     $('.tdremainingamount').val(remainings);
-      //     $('.trdateofpay').val(remainings);
-      //     $('.trremainingamount').val(remaining);
-      //  		$(this).parent('div.row').remove();
-
-      //  });
-
-//=======================================END REMOVING THE EXTRA TEXTBOX CALCULATION INFORMATION=====================================
-        
-//=====================================START OF OTHER MATERIALS INFORMATION====================================
-      
-//                 var trtotalamount=0;
-//                 var trdr= 0;
-//                 var trzr=0;
-//                 var trcheaque=0;
-
-//                 var total_of_hj=0;
-//                 var trzj = 0; // OFR ADDRETURN TRIM
-
-//                 $('.trdr, .trzr, .trcheaque, .trzj').keyup(function(){
-                  
-//                       trtotalamount = parseInt($('.trtotalamount').val());
-                      
-//                       trzj = $.trim($('.trzj').val());
-//                       trzj = parseInt(trzj==''?0:trzj);
-
-                      
-//                       trdr = $.trim($('.trdr').val());
-//                       trdr = parseInt(trdr==''?0:trdr);
-
-//                       trzr = $.trim($('.trzr').val());
-//                       trzr = parseInt(trzr==''?0:trzr);
-
-//                       trcheaque = $.trim($('.trcheaque').val());
-//                       trcheaque = parseInt(trcheaque==''?0:trcheaque);
-
-//                       total_of_hj = trdr+trzr+trcheaque+trzj;
-
-//                       $('.trtotalamount').val(total_of_hj);
-
-//                 });
-
-
-
-//               var trvfrieght=0;
-//               var trextraweight=0;
-//               var tradvancecomission=0;
-//               var trpendingcomission=0;
-//               var trkanta=0;
-//               var trotherinfo=0;
-//               var trdehari=0;
-
-//               var total_all=0;
-//               var trrecievedamount=0;
-//               var trdateofpay=0;
-//               $('.trrecievedamount, .trvfrieght, .trextraweight, .tradvancecomission, .trpendingcomission, .trkanta, .trotherinfo, .trdehari').keyup(function(){
-//                 trdateofpay = parseInt($('.trdateofpay').val());
-//                 trtotalamount = parseInt($('.trtotalamount').val());
-
-                
-//                 trrecievedamount = $.trim($('.trrecievedamount').val());
-//                 trrecievedamount = parseInt(trrecievedamount==''?0:trrecievedamount);
-
-
-//                 trvfrieght = $.trim($('.trvfrieght').val());
-//                 trvfrieght = parseInt(trvfrieght==''?0:trvfrieght);
-
-//                 trextraweight = $.trim($('.trextraweight').val());
-//                 trextraweight = parseInt(trextraweight==''?0:trextraweight);
-
-//                 tradvancecomission = $.trim($('.tradvancecomission').val());
-//                 tradvancecomission = parseInt(tradvancecomission==''?0:tradvancecomission);
-
-//                 trpendingcomission = $.trim($('.trpendingcomission').val());
-//                 trpendingcomission = parseInt(trpendingcomission==''?0:trpendingcomission);
-
-//                 trkanta = $.trim($('.trkanta').val());
-//                 trkanta = parseInt(trkanta==''?0:trkanta);
-
-//                 trotherinfo = $.trim($('.trotherinfo').val());
-//                 trotherinfo = parseInt(trotherinfo==''?0:trotherinfo);
-
-//                 trdehari = $.trim($('.trdehari').val());
-//                 trdehari = parseInt(trdehari==''?0:trdehari);
-
-                
-//                total_all = trvfrieght+trextraweight+tradvancecomission+trpendingcomission+trkanta+trotherinfo+trdehari+trrecievedamount;
-//                remaining = trtotalamount-total_all;
-//                $('.trdateofpay').val(remaining);
-
-//               });
-
-
-
-// //=====================================START OF OTHER MATERIALS INFORMATION====================================
-
-
-// //=====================================START OF RETURN TRIP INFORMATION====================================
-
-//                 var trvfrieght=0;
-//                 var inam=0;
-//                 var tradvancecomission=0;
-//                 var trpendingcomission=0;
-//                 var trkanta=0;
-//                 var trincometax=0;
-//                 var trdehari=0;
-
-//                 var trshifting=0;
-//                 var trloading=0;
-//                 var trextraweight=0;
-//                 var trtokarachi=0;
-
-
-//                 var total_all=0;
-//                 var trrecievedamount=0;
-//                 var trremainingamount=0;
-//                 $('.inam, .trincometax, .trrecievedamount, .trshifting,.trtokarachi, .trloading, .trvfrieght, .trextraweight, .tradvancecomission, .trpendingcomission, .trkanta, .trotherinfo, .trdehari').keyup(function(){
-//                   trremainingamount = parseInt($('.trremainingamount').val());
-//                   trtotalamount = parseInt($('.trtotalamount').val());
-
-                  
-//                   trrecievedamount = $.trim($('.trrecievedamount').val());
-//                   trrecievedamount = parseInt(trrecievedamount==''?0:trrecievedamount);
-
-//                   inam = $.trim($('.inam').val());
-//                   inam = parseInt(inam==''?0:inam);
-
-//                   trincometax = $.trim($('.trincometax').val());
-//                   trincometax = parseInt(trincometax==''?0:trincometax);
-
-//                   trshifting = $.trim($('.trshifting').val());
-//                   trshifting = parseInt(trshifting==''?0:trshifting);
-
-//                   trloading = $.trim($('.trloading').val());
-//                   trloading = parseInt(trloading==''?0:trloading);
-
-//                   trtokarachi = $.trim($('.trtokarachi').val());
-//                   trtokarachi = parseInt(trtokarachi==''?0:trtokarachi);
-
-
-                  
-                 
-
-//                   trvfrieght = $.trim($('.trvfrieght').val());
-//                   trvfrieght = parseInt(trvfrieght==''?0:trvfrieght);
-
-//                   trextraweight = $.trim($('.trextraweight').val());
-//                   trextraweight = parseInt(trextraweight==''?0:trextraweight);
-
-//                   tradvancecomission = $.trim($('.tradvancecomission').val());
-//                   tradvancecomission = parseInt(tradvancecomission==''?0:tradvancecomission);
-
-//                   trpendingcomission = $.trim($('.trpendingcomission').val());
-//                   trpendingcomission = parseInt(trpendingcomission==''?0:trpendingcomission);
-
-//                   trkanta = $.trim($('.trkanta').val());
-//                   trkanta = parseInt(trkanta==''?0:trkanta);
-
-//                   trotherinfo = $.trim($('.trotherinfo').val());
-//                   trotherinfo = parseInt(trotherinfo==''?0:trotherinfo);
-
-//                   trdehari = $.trim($('.trdehari').val());
-//                   trdehari = parseInt(trdehari==''?0:trdehari);
-
-                
-                  
-//                 total_all = trvfrieght+inam+trextraweight+tradvancecomission+trpendingcomission+trkanta+trincometax+trshifting+trloading+trtokarachi+trotherinfo+trdehari+trrecievedamount;
-//                 remaining = trtotalamount-total_all;
-//                 $('.trremainingamount').val(remaining);
-
-//                 });
-               
-
-
-//=====================================END OF RETURN TRIP INFORMATION====================================
 
 //=====================================START OF DAILY TRIP INFORMATION====================================
 
@@ -680,6 +547,35 @@ $(document).ready(function (){
             });
             // ========================================= BY REMOVING DAILY TRIP DESCRIPTION WIHT AMOUNT
 
+
+              //=========================================START OF DAILY DESCRIPTION AND AMOUNT 
+              var $tripformlast = $('.tripform-last');
+                
+              $tripformlast.delegate('.toeamountlast', 'change', function (e)
+              {
+                // var remaining = $.trim($('.remainrate').val());
+                // remaining = parseInt(remaining==''?0:remaining);
+
+                    e.stopImmediatePropagation();
+
+                    var totalofDaily = 0;
+                    $('.toeamountlast').each(function(){
+
+                      var toeamountofDaily =  $.trim($(this).val());
+                      toeamountofDaily = parseInt(toeamountofDaily==''?0:toeamountofDaily);
+                      totalofDaily +=toeamountofDaily;
+                    });
+                    
+                  var total = totalofDaily;
+
+                  // alert(total);
+
+                  $('.remainrate').val(total);
+              
+              });
+              // ========================================= BY REMOVING DAILY TRIP DESCRIPTION WIHT AMOUNT
+
+
             $('div.add_comissions').delegate('a.remove_comission' ,'click', function(){
               
               toeamountofDaily = $.trim($(this).siblings('.toeamountparent').find('input.toeamount').val());
@@ -693,19 +589,6 @@ $(document).ready(function (){
                $(this).parent('div.row').remove();
     
            });
-
-          $('#comissionform').on('submit' , function(){
-          var trapdname = $('.trapdname').val();
-          if($('.tdremainingamount').val() != 0 && trapdname === '')
-          {
-            $('#comissionremain').modal('show');
-            return false;
-          }
-          else
-          {
-            return true;
-          }
-        });
 
 //=====================================END OF DAILY TRIP INFORMATION====================================
 
@@ -836,19 +719,6 @@ $(document).ready(function (){
 
                         });
 
-                        $('#parchoonform').on('submit' , function(){
-                        var trapdname = $('#trapdname').val();
-                        if($('.tomremainingamount').val() != 0 && trapdname === '')
-                        {
-                          $('#parchoonremain').modal('show');
-                          return false;
-                        }
-                        else
-                        {
-                          return true;
-                        }
-                      });
-
         $('.add_parchoon').on('click',function(){
           $('.add_parchoons').append('<div class="row"><div class="col-md-1"></div><div class="col-md-3"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">description</label><input type="text" class="form-control" name="toedescription[]" value=""></div></div><div class="col-sm-3 toeamountparent"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="number" class="form-control toeamount" name="toeamount[]" value=""></div></div><input type="hidden" class="form-control" name="toeidentity[]" value="parchoon-0"><a href="#" class="remove_parchoon my-2" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
         });
@@ -856,6 +726,14 @@ $(document).ready(function (){
 //=====================================END OF OTHER INFORMATION====================================
 
 //==================== START SUMMARRY JQUERY ====================////
+                var vfreight = 0;
+                var frate = 0;
+                var rvfrieght = 0;
+                var ttddehari = 0;
+                var ewfare = 0;
+                var ttdshifting = 0;
+                var ttdpointprize = 0;
+                var ttdtotalincometwo = 0;
 
                 $('select.trucks').change(function(){
                   var id = $(this).val();
@@ -898,10 +776,11 @@ $(document).ready(function (){
                           $('.fweight').val(parsed.totalweight);
 
                         }
-
+                        
                         $('.tocty').val(parsed.tcname);
                         $('.tostation').val(parsed.tstname);
                         $('.vfreight').val(parsed.tdvfrieght);
+                        $('.tostationid').val(parsed.tstid);
                         $('.ttddehari').val(parsed.tddehari);
                         $('.dehariinitial').val(parsed.tddehari);
                         trdehari = $.trim($('.trdehari').val());
@@ -909,23 +788,43 @@ $(document).ready(function (){
 
                         dehariinitial = $.trim($('.dehariinitial').val());
                         dehariinitial = parseInt(dehariinitial==''?0:dehariinitial);
-
                         $('.ttddehari').val(dehariinitial+trdehari);
-                        // $('.ttdshifting1').val(parsed.tddehari);
-                        // $('.ttdpointprize1').val(parsed.tddehari); 
-                        // arra=[];
-                        // $.each(parsed,function(s,data){
-                        //   arra.push();
-                        //   arra.push();
-                          
-                        // });
                       }
-                  })
+                  }).done(function(){
+
+                    vfreight = $.trim($('.vfreight').val());
+                  vfreight = parseInt(vfreight==''?0:vfreight);
+
+                  frate = $.trim($('.frate').val());
+                  frate = parseInt(frate==''?0:frate);
+
+                  rvfrieght = $.trim($('.rvfrieght').val());
+                  rvfrieght = parseInt(rvfrieght==''?0:rvfrieght);
+
+                  ttddehari = $.trim($('.ttddehari').val());
+                  ttddehari = parseInt(ttddehari==''?0:ttddehari);
+
+                  ewfare = $.trim($('.ewfare').val());
+                  ewfare = parseInt(ewfare==''?0:ewfare);
+
+                  ttdshifting = $.trim($('.ttdshifting').val());
+                  ttdshifting = parseInt(ttdshifting==''?0:ttdshifting);
+
+                  ttdpointprize = $.trim($('.ttdpointprize').val());
+                  ttdpointprize = parseInt(ttdpointprize==''?0:ttdpointprize);
+
+                  ttdtotalincometwo = vfreight+frate+rvfrieght+ttddehari+ewfare+ttdshifting+ttdpointprize;
+                  // alert(ttdshifting);
+                  $('.ttdtotalincometwo').val(ttdtotalincometwo);
+                  });
+
+                  
+
                 });
 
 
                 $('.add_pump').on('click',function(){
-                  $('.add_pumps').append('<div class="row"><div class="col-sm-1"></div><div class="col-sm-3"><div class="form-group">'+$('div.pmp').html()+'</div></div><div class="col-sm-2"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Diesel In liter</label><input type="Number" class="form-control" name="ttddieselliter"></div></div><div class="col-sm-2"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="Number" class="form-control" name="ttddieselprice"></div></div><div class="col-sm-3"><div class="form-group">'+$('.pmpstatus').html()+'</div></div><a href="#" class="remove_pump my-4" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
+                  $('.add_pumps').append('<div class="row"><div class="col-sm-1"></div><div class="col-sm-3"><div class="form-group">'+$('div.pmp').html()+'</div></div><div class="col-sm-2"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Diesel In liter</label><input type="Number" class="form-control" name="ttddieselliter"></div></div><div class="col-sm-2"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="Number" class="form-control" name="ttddieselprice"></div></div><div class="col-sm-3"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Paid Amount</label><input type="number" class="form-control" name="tpdpaidamount[]"></div></div><a href="#" class="remove_pump my-4" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
                 });
 
                 $('div.add_pumps').delegate('a.remove_pump' ,'click', function(){
@@ -935,7 +834,7 @@ $(document).ready(function (){
                 });
 
                 $('.add_voucher').on('click',function(){
-                  $('.add_vouchers').append('<div class="row"><div class="col-md-1"></div><div class="col-md-3"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">description</label><input type="text" class="form-control" name="toedescription[]" value=""></div></div><div class="col-sm-3 toeamountparent"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="number" class="form-control toeamount" name="toeamount[]" value=""></div></div><input type="hidden" class="form-control" name="toeidentity[]" value="voucher-0"><a href="#" class="remove_voucher my-2" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
+                  $('.add_vouchers').append('<div class="row"><div class="col-md-1"></div><div class="col-md-3"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">description</label><input type="text" class="form-control" name="toedescription[]" value=""></div></div><div class="col-sm-3 toeamountparent"><div class="form-group"><label for="exampleEmail" class="bmd-label-floating text-uppercase">Amount</label><input type="number" class="form-control toeamountlast" name="toeamount[]" value=""></div></div><input type="hidden" class="form-control" name="toeidentity[]" value="voucher-0"><a href="#" class="remove_voucher my-2" title="Add new field"><i class="material-icons">remove_circle</i></a></div>');
                 });
 
                 var ttdprizeamount = 0;
@@ -956,6 +855,8 @@ $(document).ready(function (){
                 var ttdmunshiana = 0; 
                 var ttdfoodexpense = 0;
                 var ttdtotalexpense = 0;
+                var remainrate = 0;
+                var avpa = 0;
 
                 $(' .ttddacamount , .ttdmunshiana , .ttdfoodexpense , .ttdiamount , .ttdtdamount , .ttdtsamount , .ttddescamount , .ttddsamount , .ttddaoamount , .ttddexpamount ,.ttdprizeamount , .ttdhohajijani , .ttdweightexpense , .ttdcunloading , .ttdtmaintainance , .ttdpolice , .ttdhjbrokery').keyup(function(){
 
@@ -1013,6 +914,23 @@ $(document).ready(function (){
                    ttdtotalexpense = ttdfoodexpense+ttdweightexpense+ttdprizeamount+ttdhohajijani+ttdtmaintainance+ttdcunloading+ttdmunshiana+ttddacamount+ttddexpamount+ttddaoamount+ttddsamount+ttddescamount+ttdtsamount+ttdtdamount+ttdiamount+ttdhjbrokery+ttdpolice;
 
                    $('.ttdtotalexpense').val(ttdtotalexpense);
+
+                   remainrate = $.trim($('.remainrate').val());
+                   remainrate = parseInt(remainrate==''?0:remainrate);
+
+                   avpa = $.trim($('.avpa').val());
+                   avpa = parseInt(avpa==''?0:avpa);
+
+                   $('.remainrate').val(totalincome-ttdtotalexpense-returnamount);
+
+                   $('.advdriver').val($('.remainrate').val()-avpa);
+                });
+
+                $('.avpa').keyup(function(){
+                   avpa = $.trim($('.avpa').val());
+                   avpa = parseInt(avpa==''?0:avpa);
+
+                   $('.advdriver').val($('.remainrate').val()-avpa);
                 });
 
                 var takehaji = 0;
@@ -1034,6 +952,10 @@ $(document).ready(function (){
                    totalincome = vpc+takehaji+creditamount;
 
                    $('.ttlincome').val(totalincome);
+
+                   $('.remainrate').val(totalincome-ttdtotalexpense-returnamount);
+
+                   $('.advdriver').val($('.remainrate').val()-avpa);
                 });
 
                 var ttdtotalexpense = 0;
@@ -1055,6 +977,8 @@ $(document).ready(function (){
                    remainingamount = ttlincome-ttdtotalexpense-returnamount;
 
                    $('.remainrate').val(remainingamount);
+
+                   $('.advdriver').val($('.remainrate').val()-avpa);
                 });
 
             $('select.vpaamount').on('change' , function(){
@@ -1102,30 +1026,33 @@ $(document).ready(function (){
             if(ownvpc === 'pending')
             {
               $('.vpc').val(samc);
+              $('.ttlincome').val(samc);
             }
             else
             {
               $('.vpc').val(vpb);
+              $('.ttlincome').val(vpb);
             }
           });
 
             $('div.add_vouchers').delegate('a.remove_voucher' ,'click', function(){
               $(this).parent('div.row').remove();
 
-            });
+              var totalofDaily = 0;
+              $('.toeamountlast').each(function(){
 
-          $('#tripform').on('submit' , function(){
-          var trapdname = $('#trapdname').val();
-          if($('.trremainingamount').val() != 0 && trapdname === '')
-          {
-            $('#retripremain').modal('show');
-            return false;
-          }
-          else
-          {
-            return true;
-          }
-        });
+                var toeamountofDaily =  $.trim($(this).val());
+                toeamountofDaily = parseInt(toeamountofDaily==''?0:toeamountofDaily);
+                totalofDaily +=toeamountofDaily;
+              });
+              
+            var total = totalofDaily;
+
+            // alert(total);
+
+            $('.remainrate').val(total);
+
+            });
 
           $('.ttddieselprice , .ttddieselliter').keyup(function(){
               ttddieselprice = $.trim($('.ttddieselprice').val());
@@ -1258,6 +1185,43 @@ $(document).ready(function (){
                         {
                          $('.trpaymentstatus').val('Paid');
                         }
+
+                      vfreight = $.trim($('.vfreight').val());
+                      vfreight = parseInt(vfreight==''?0:vfreight);
+
+                      frate = $.trim($('.frate').val());
+                      frate = parseInt(frate==''?0:frate);
+
+                      rvfrieght = $.trim($('.rvfrieght').val());
+                      rvfrieght = parseInt(rvfrieght==''?0:rvfrieght);
+
+                      ttddehari = $.trim($('.ttddehari').val());
+                      ttddehari = parseInt(ttddehari==''?0:ttddehari);
+
+                      ewfare = $.trim($('.ewfare').val());
+                      ewfare = parseInt(ewfare==''?0:ewfare);
+
+                      ttdshifting = $.trim($('.ttdshifting').val());
+                      ttdshifting = parseInt(ttdshifting==''?0:ttdshifting);
+
+                      ttdpointprize = $.trim($('.ttdpointprize').val());
+                      ttdpointprize = parseInt(ttdpointprize==''?0:ttdpointprize);
+
+                      ttdtotalincometwo = vfreight+frate+rvfrieght+ttddehari+ewfare+ttdshifting+ttdpointprize;
+
+                      $('.ttdtotalincometwo').val(ttdtotalincometwo);
+                }); 
+
+                var ttdtyresell = 0;
+                var ttdtotalincometie = 0;
+
+                $('.ttdtyresell').keyup(function(){
+                  ttdtyresell = $.trim($('.ttdtyresell').val());
+                  ttdtyresell = parseInt(ttdtyresell==''?0:ttdtyresell);
+                  
+                  ttdtotalincometie = ttdtotalincometwo+ttdtyresell;
+
+                  $('.ttdtotalincometwo').val(ttdtotalincometie);
                 });
 
                 $('.add_return').on('click',function(){
@@ -1303,7 +1267,31 @@ $(document).ready(function (){
                         $(this).parent('div.row').remove();
 
                         });
-
+                        $('select.dailytriptruckid').change(function(){
+                           id = $(this).children("option:selected").val();
+                            // alert(id);
+                            cudate = $('.currentdate').val();
+                            // alert(cudate);
+                            var url = base_url+'dailytrip/checkdateontruckatsamedate';
+                            var redirect = base_url+'dailytrip/add_dailytrip';
+                          // alert(url);
+                            $.ajax({
+                              url: url,
+                              type: 'POST',
+                              data: {id:id},
+                              success:function(data){
+                                
+                               data = JSON.parse(data);
+                               if(data.tdcurrentdate==0){
+                              
+                                
+                               }else{
+                                alert('Truck is already available on same date.');
+                                window.location.assign(redirect);
+                               }
+                              }
+                            });
+                        });
 //=======================================END OF RETURN TRIP INFORMATION=====================================
 
 });

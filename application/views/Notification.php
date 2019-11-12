@@ -1,7 +1,8 @@
+
      <style type="text/css">
        .nav-pills .nav-item i
        {
-          display: inline-block; 
+          display: inline-block;
           font-size: 22px;
           padding: 11px 0;
           line-height: 0;
@@ -19,6 +20,8 @@
         font-size: 20px;
        }
      </style>
+
+
       <div class="content">
         <div class="container-fluid">
           <div class="card">
@@ -45,28 +48,37 @@
             </div>
             <div class="card-body">
               <div id="navigation-pills">
-                    <div class="row">      
+                    <div class="row">
                          <div class="col-lg-12 col-md-12">
                             <div class="row">
                                 <div class="col-md-3">
                                     <ul class="nav nav-pills nav-pills-rose flex-column">
+
                                         <li class="nav-item">
+                                            <a class="nav-link <?php if($category==1){ echo 'active'; }?> " href="<?= base_url()?>main/all_notification/1">
+                                              <i class="material-icons float-left">local_shipping</i>
+                                              Truck Details
+                                              <span class="float-right badge badge-default"><?=$truck_no_of_notyfy;?></span></a>
+                                        </li>
+
+
+                                        <!-- <li class="nav-item">
                                             <a class="nav-link <?php if($category==1){ echo 'active'; }?> " href="<?= base_url()?>main/tripnotification/1">
                                               <i class="material-icons float-left">markunread</i>
                                               Trip Detail
-                                              <span class="float-right badge badge-default"><?=$tripnotic;?></span></a>
+                                              <span class="float-right badge badge-default"><?=$number_of_notific;?></span></a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link  <?php if($category==2){ echo 'active'; }?>  " href="<?= base_url()?>main/othermaterialnotification/2" >
                                               <i class="material-icons float-left">mail_outline</i>
                                               Other Materials
-                                              <span class="float-right badge badge-default"><?=$othernotic;?></span></a>
+                                              <span class="float-right badge badge-default"><?=$number_of_notific;?></span></a>
                                         </li>
                                         <li class="nav-item">
                                         <a class="nav-link  <?php if($category==3){ echo 'active'; }?>" href="<?= base_url()?>main/trucknotification/3" >
                                               <i class="material-icons float-left">star_border</i>
                                               Truck Buy/Sale
-                                              <span class="float-right badge badge-default"><?=$trucknotic;?></span></a>
+                                              <span class="float-right badge badge-default"><?=$number_of_notific;?></span></a>
                                         </li>
                                         <li class="nav-item">
                                         <a class="nav-link  <?php if($category==4){ echo 'active'; }?>" href="<?= base_url()?>main/trucknotification/4" >
@@ -85,7 +97,7 @@
                                               <i class="material-icons float-left">delete_outline</i>&nbsp;
                                               TRASH
                                               <span class="float-right badge badge-default">0</span></a>
-                                        </li>
+                                        </li> -->
                                     </ul>
                                 </div>
                                 <div class="col-md-4 border-left">
@@ -102,30 +114,22 @@
                                       <div class="peer mR-10"><div class="checkbox checkbox-circle checkbox-info peers ai-c"><input type="checkbox" id="inputCall1" name="inputCheckboxesCall" class="peer"><label for="inputCall1" class="peers peer-greed js-sb ai-c"></label></div></div><div class="peer peer-greed ov-h">
                                         <div class="peers ai-c">
 
-                                        <?php 
+                                        <?php
                                         if($category==1){
-                                            foreach ($tripnotification as $key) {
+                                            foreach ($truck_notification_rows as $key) {
 
-                                                if($key->tnstatus==0){
+                                                if($key->tnstatus==1){
                                                 ?>
-                                                  
-                                                  <div class="peer peer-greed messageclass" style=" border: 1px solid #fcd8d8;  padding: 8px 0px 0px 8px; background: white;"><h6> Recieveable amount is:  <?= $key->ttdremainingamount?>  <span class="float-right mx-4"><small> <a href="">Trip Detail</a></small></span></h6> 
-                                                    <input type="hidden" class="notifyId" value="<?=$key->tnid; ?>">
-                                                    <input type="hidden" class="tncategory" value="<?=$key->tncategory; ?>">
-                                                    <input type="hidden" class="tnfromid" value="<?=$key->tnfromid; ?>">
-                                                    <input type="hidden" class="ttripdetail" value="ttripdetail">
-                                                    <input type="hidden" class="tnfromid" value="ttdid">
+
+                                                  <div class="peer peer-greed messageclass" style=" border: 1px solid #fcd8d8;  padding: 8px 0px 0px 8px; background: white;"><h6> Truck No :  <?= $key->tntnumber?>  <span class="float-right mx-4"><small> <a href="#" data-toggle="modal" data-target="#truck_notify_update" class="truck_notify_update">Update</a> | <a href="#" class="Truck_no_click">View Detail</a> <input type="hidden" value="<?=$key->tnid; ?>"></small></span></h6>
+
                                                   </div>
                                                 <?php
                                                 }
                                                 else{
                                                 ?>
-                                                 <div class="peer peer-greed messageclass" style=" border: 1px solid #ccc;  padding: 8px 0px 0px 8px; background: #ccc;"><h6> Recieveable amount was:  <?= $key->ttdremainingamount?>   <span class="float-right mx-4"><small><a href="">Trip Detail</a></small></span></h6> 
-                                                 <input type="hidden" class="notifyId" value="<?=$key->tnid; ?>">
-                                                    <input type="hidden" class="tncategory" value="<?=$key->tncategory; ?>">
-                                                    <input type="hidden" class="tnfromid" value="<?=$key->tnfromid; ?>">
-                                                    <input type="hidden" class="ttripdetail" value="ttripdetail">
-                                                    <input type="hidden" class="tnfromid" value="ttdid">
+                                                 <div class="peer peer-greed messageclass" style=" border: 1px solid #ccc;  padding: 8px 0px 0px 8px; background: #ccc;"><h6> Truck No:  <?= $key->tntnumber?>   <span class="float-right mx-4"><small><a href="#" data-toggle="modal" data-target="#truck_notify_update" class="truck_notify_update">Update</a> | <a href="#" class="Truck_no_click">Trip Detail</a><input type="hidden" value="<?=$key->tnid; ?>"></small> </span></h6>
+
                                                   </div>
                                                 <?php
                                                 }
@@ -138,8 +142,8 @@
 
                                                 if($key->tnstatus==0){
                                                 ?>
-                                                  
-                                                  <div class="peer peer-greed messageclass" style=" border: 1px solid #fcd8d8;  padding: 8px 0px 0px 8px; background: white;"><h6> Recieveable amount is:  <?= $key->tomremainingamount?>  <span class="float-right mx-4"><small> <a href="">Other Detail</a></small></span></h6> 
+
+                                                  <div class="peer peer-greed messageclass" style=" border: 1px solid #fcd8d8;  padding: 8px 0px 0px 8px; background: white;"><h6> Recieveable amount is:  <?= $key->tomremainingamount?>  <span class="float-right mx-4"><small> <a href="">Other Detail</a></small></span></h6>
                                                   <input type="hidden" class="notifyId" value="<?=$key->tnid; ?>">
                                                     <input type="hidden" class="tncategory" value="<?=$key->tncategory; ?>">
                                                     <input type="hidden" class="tnfromid" value="<?=$key->tnfromid; ?>">
@@ -151,7 +155,7 @@
                                                 }
                                                 else{
                                                 ?>
-                                                 <div class="peer peer-greed messageclass" style=" border: 1px solid #ccc;  padding: 8px 0px 0px 8px; background: #ccc;"><h6> Recieveable amount was:  <?= $key->tomremainingamount?>   <span class="float-right mx-4"><small><a href="">Other  Detail</a></small></span></h6> 
+                                                 <div class="peer peer-greed messageclass" style=" border: 1px solid #ccc;  padding: 8px 0px 0px 8px; background: #ccc;"><h6> Recieveable amount was:  <?= $key->tomremainingamount?>   <span class="float-right mx-4"><small><a href="">Other  Detail</a></small></span></h6>
                                                  <input type="hidden" class="notifyId" value="<?=$key->tnid; ?>">
                                                     <input type="hidden" class="tncategory" value="<?=$key->tncategory; ?>">
                                                     <input type="hidden" class="tnfromid" value="<?=$key->tnfromid; ?>">
@@ -164,49 +168,26 @@
 
                                           }
 
-                                          if($category==3){
-                                            foreach ($trucknotification as $key) {
 
-                                                if($key->tnstatus==0){
-                                                ?>
-                                                  
-                                                  <div class="peer peer-greed messageclass" style=" border: 1px solid #fcd8d8;  padding: 8px 0px 0px 8px; background: white;"><h6> Recieveable amount is:  <?= $key->tremainingamount?>  <span class="float-right mx-4"><small> <a href="">Truck Detail</a></small></span></h6> 
-                                                    <input type="hidden" class="notifyId" value="<?=$key->tnid; ?>">
-                                                    <input type="hidden" class="tncategory" value="<?=$key->tncategory; ?>">
-                                                    <input type="hidden" class="tnfromid" value="<?=$key->tnfromid; ?>">
-                                                    <input type="hidden" class="ttripdetail" value="ttruck">
-                                                    <input type="hidden" class="tnfromid" value="tid">
-                                                  </div>
-                                                <?php
-                                                }
-                                                else{
-                                                ?>
-                                                 <div class="peer peer-greed messageclass" style=" border: 1px solid #ccc;  padding: 8px 0px 0px 8px; background: #ccc;"><h6> Recieveable amount was:  <?= $key->tremainingamount?>   <span class="float-right mx-4"><small><a href="">Truck Detail</a></small></span></h6> 
-                                                    <input type="hidden" class="notifyId" value="<?=$key->tnid; ?>">
-                                                    <input type="hidden" class="tncategory" value="<?=$key->tncategory; ?>">
-                                                    <input type="hidden" class="tnfromid" value="<?=$key->tnfromid; ?>">
-                                                    <input type="hidden" class="ttripdetail" value="ttruck">
-                                                    <input type="hidden" class="tnfromid" value="tid">
-                                                  </div>
-                                                <?php
-                                                }
-                                            }
 
-                                          }
 
-                                        
 
                                          ?>
-                                           
+
                                         </div>
 
 
                                     </div>
-                                  </div> 
+                                  </div>
                                 </div>
                                 <div class="col-md-5 border-left">
-                                    <div class="tab-content displayMessage">
+                                    <div class="tab-content displayMessage" style="text-align:center">
                                     <center><h2>No Message</h2></center>
+                                          <div class="display_loading" style="display:none;">
+                                          <center><h2>Fetching Data.......</h2></center>
+                                          <img  src="<?=base_url()?>assets/img/loading.gif" width="100">
+                                          </div>
+
                                         <!-- <div class="tab-pane active" id="tab1">
                                             Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed base benefits.
                                             <br>
@@ -229,6 +210,64 @@
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+            <div id="truck_notify_update" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h2 class="modal-title" id="my-modal-title">Update Trcu Insurence etc..</h2>
+
+                    <button class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form method="POST" action="<?=base_url()?>main/update_truck_dates">
+                  <div class="modal-body">
+
+                   <div class="row">
+                   <input type="hidden" name="tnid" class="set_notify_id">
+                   <div class="col-sm-3">
+                      <div class="form-group">
+                        <label for="">Insurence Expiry Date</label>
+                        <input type="text" name="tninsuranceexpirydate" id="tninsuranceexpirydate_set" class="form-control datepicker" placeholder="" aria-describedby="helpId">
+                        <small id="helpId" class="text-muted"></small>
+                      </div>
+                     </div>
+                     <div class="col-sm-3">
+                      <div class="form-group">
+                        <label for="">Permit Expiry Date</label>
+                        <input type="text" name="tnpermitexpirydate" id="tnpermitexpirydate_set" class="form-control datepicker" placeholder="" aria-describedby="helpId">
+                        <small id="helpId" class="text-muted"></small>
+                      </div>
+                     </div>
+                     <div class="col-sm-3">
+                      <div class="form-group">
+                        <label for="">Fitness Expiry Date</label>
+                        <input type="text" name="tnfitnessexpirydate" id="tnfitnessexpirydate_set" class="form-control datepicker" placeholder="" aria-describedby="helpId">
+                        <small id="helpId" class="text-muted"></small>
+                      </div>
+                     </div>
+                     <div class="col-sm-3">
+                      <div class="form-group">
+                        <label for="">Fitness Expiry Date</label>
+                        <input type="text" name="tntexexpirydate" id="tntexexpirydate_set" class="form-control datepicker" placeholder="" aria-describedby="helpId">
+                        <small id="helpId" class="text-muted"></small>
+                      </div>
+                     </div>
+
+                   </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="Update">
+                  </div>
+                  </form>
                 </div>
               </div>
             </div>

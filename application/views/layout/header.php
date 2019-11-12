@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(isset($_SESSION["user"])){
 
   $TRUCK = 'NOTALLOWED';
@@ -13,24 +13,26 @@ if(isset($_SESSION["user"])){
   $COMISSION = 'NOTALLOWED';
   $PARCHOON = 'NOTALLOWED';
   $VOUCHER = 'NOTALLOWED';
-  
+
   $EMPLOYEE = 'NOTALLOWED';
   $OFFICEEXPENCE = 'NOTALLOWED';
-  
-  
+
+
   if($_SERVER['REQUEST_URI']==''){
 
   }
 
 
-
+  // redirect('Main');
 
 
 
 
 
 }else{
-  redirect('Login_controller');
+  redirect('Login_Controller');
+
+
 }
 // echo '<pre>';
 // $all = explode('/',$_SERVER['REQUEST_URI']);
@@ -52,7 +54,7 @@ if(isset($_SESSION["user"])){
   <!-- Extra details for Live View on GitHub Pages -->
   <!-- Canonical SEO -->
   <link rel="canonical" href="../../../product/material-dashboard-pro_2.htm" />
-  
+
   <!--     Fonts and icons     -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
@@ -103,22 +105,22 @@ if(isset($_SESSION["user"])){
       <div class="sidebar-wrapper">
         <div class="user">
           <div class="photo">
-               <?php 
+               <?php
                   if($_SESSION['auth_id_just_for_admin']==0){
-                      echo '<img src="'.base_url().'uploads/noimage.png" />';          
+                      echo '<img src="'.base_url().'uploads/noimage.png" />';
                   }else{
-                    echo '<img src="'.base_url().'uploads/'.$_SESSION['employee_image'].'" />'; 
+                    echo '<img src="'.base_url().'uploads/'.$_SESSION['employee_image'].'" />';
                   }
                ?>
-            
+
           </div>
           <div class="user-info">
             <a data-toggle="collapse" href="validation.html#collapseExample" class="username">
               <span>
-              
-                <?php 
+
+                <?php
                 if($_SESSION['auth_id_just_for_admin']==0){
-                    echo $_SESSION['user'];                
+                    echo $_SESSION['user'];
                 }else{
                   echo $_SESSION['employee_name'];
                 }
@@ -128,19 +130,19 @@ if(isset($_SESSION["user"])){
             <div class="collapse" id="collapseExample">
               <ul class="nav">
                 <li class="nav-item">
-                  <a class="nav-link" href="validation.html#">
+                  <a class="nav-link" href="#">
                     <span class="sidebar-mini"> MP </span>
                     <span class="sidebar-normal"> My Profile </span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="validation.html#">
+                  <a class="nav-link" href="#">
                     <span class="sidebar-mini"> EP </span>
                     <span class="sidebar-normal"> Edit Profile </span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="validation.html#">
+                  <a class="nav-link" href="#">
                     <span class="sidebar-mini"> S </span>
                     <span class="sidebar-normal"> Settings </span>
                   </a>
@@ -260,7 +262,7 @@ if(isset($_SESSION["user"])){
               <ul class="nav">
               <?php if(in_array('comission', json_decode($_SESSION['authentication']))){ ?>
                 <li class="nav-item ">
-                  <a class="nav-link" href="<?php echo base_url()?>dailytrip/add_dailytrip">
+                  <a class="nav-link" href="<?php echo base_url()?>dailytrip">
                     <i class="material-icons">map</i>
                     <p> COMISSION </p>
                   </a>
@@ -302,9 +304,25 @@ if(isset($_SESSION["user"])){
         <?php } ?>
         <?php if(in_array('officeexpence', json_decode($_SESSION['authentication']))){ ?>
           <li class="nav-item ">
-            <a class="nav-link" href="<?php echo base_url()?>Employee/addofficeexpence">
+            <a class="nav-link" href="<?php echo base_url()?>Employee/expence_and_pending">
               <i class="material-icons">event_note</i>
-              <p> OFFICE EXPENSE </p>
+              <p> DAILY ENTRY </p>
+            </a>
+          </li>
+        <?php } ?>
+        <?php if(in_array('pumpdetail', json_decode($_SESSION['authentication']))){ ?>
+          <li class="nav-item ">
+            <a class="nav-link" href="<?=base_url()?>Pumpdetail">
+              <i class="material-icons">ev_station</i>
+              <p> PUMP STATION </p>
+            </a>
+          </li>
+        <?php } ?>
+        <?php if(in_array('localtrip', json_decode($_SESSION['authentication']))){ ?>
+          <li class="nav-item ">
+            <a class="nav-link" href="<?=base_url()?>Localtrip">
+              <i class="material-icons">local_shipping</i>
+              <p> DUMPER </p>
             </a>
           </li>
         <?php } ?>
@@ -335,9 +353,9 @@ if(isset($_SESSION["user"])){
               <div class="input-group no-border">
                 <input type="text" value="" list="tabs" class="form-control" placeholder="Search...">
                 <datalist id="tabs">
-                   <option value="abc"><a href="http://stackoverflow.com/questions"></a>abc</option>
+                   <!-- <option value="abc"><a href="http://stackoverflow.com/questions"></a>abc</option>
                    <option value="bcd"><a href="http://stackoverflow.com/questions"></a>bcd</option>
-                   <option value="cde"><a href="http://stackoverflow.com/questions"></a>cde</option>
+                   <option value="cde"><a href="http://stackoverflow.com/questions"></a>cde</option> -->
                 </datalist>
                 <button type="submit" class="btn btn-white btn-round btn-just-icon">
                   <i class="material-icons">search</i>
@@ -347,32 +365,38 @@ if(isset($_SESSION["user"])){
             </form>
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="validation.html#pablo">
-                  <i class="material-icons">dashboard</i>
+                <a class="nav-link"   data-toggle="modal" data-target="#manage_model" href="#">
+                  <i class="material-icons" title="Manage Station Recieveable and Payable Amount" data-toggle="tooltip">dashboard</i>
+                  <span class="notification"><?= $_SESSION['manage_station_amount'] ;?></span>
                   <p class="d-lg-none d-md-block">
                     Stats
                   </p>
                 </a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link" href="<?=base_url()?>main/tripnotification/1" id="navbarDropdownMenuLink" >
+                <a class="nav-link" href="<?=base_url()?>main/all_notification" id="navbarDropdownMenuLink" >
                   <i class="material-icons">notifications</i>
-                  <span class="notification"><?= $_SESSION['notification'] ;?></span>
+                  <span class="notification"><?= $_SESSION['truck_notification'] ;?></span>
                   <p class="d-lg-none d-md-block">
                     Some Actions
                   </p>
                 </a>
+                <div class="row">
+                  <div class="col-sm-12">
+
+                  </div>
+                </div>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                 
-                    <?php 
+
+                    <?php
 
                     // if($totalofaperson>$paidonInstallment ){
                     //   $total = $totalofaperson-$paidonInstallment;
                     //    echo '<a class="dropdown-item" href="validation.html#">Recieve  <span class="notification">'.$total.'</span> from  '.$personName.'</a>';
                     //      }
-                    
+
                     ?>
-                 
+
 
 
                   <a class="dropdown-item" href="validation.html#">You have 5 new tasks</a>
@@ -389,8 +413,8 @@ if(isset($_SESSION["user"])){
                   </p>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                  <a class="dropdown-item" href="validation.html#">Profile</a>
-                 <?php 
+                  <a class="dropdown-item" href="#">Profile</a>
+                 <?php
                   if($_SESSION['auth_id_just_for_admin']==0){
                     ?>
                  <a class="dropdown-item" href="<?= base_url()?>Login_Controller/createuser">Create User</a>

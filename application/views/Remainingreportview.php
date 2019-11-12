@@ -1,22 +1,4 @@
 
-<div class="content">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card-icon">
-                <a href="<?php 
-                echo base_url() ?>close/add_close/<?=$trapdid;?>
-                " class="btn btn-info"><i class="material-icons">add</i> Pay Remaining Amount</a>
-                
-              </div>
-              <div class="card">
-                <div class="card-header card-header-rose card-header-icon">
-                  <div class="card-icon">
-                    <i class="material-icons">map</i>
-                  </div>
-                  <h4 class="card-title">Trip Summary</h4>
-                </div>
-                <div class="card-body">
  <style>
   
   .text-bold{
@@ -32,8 +14,186 @@
     border-bottom: 1px solid;
     width: 100%;
   }
+  .show-error  .alert span{
+    display: inline-block !important;
+    font-weight: bolder;
+    background: green;
+    padding: 0px 5px 0 5px;
+  }
   
  </style>
+
+<div class="content">
+        <div class="container-fluid">
+
+
+
+        
+        <div class="row">
+            
+            <div class="col-md-12">
+              <div class="card ">
+                <div class="card-header card-header-rose card-header-text">
+                  <div class="card-icon">
+                  <i class="material-icons">location_city</i>
+                  </div>
+                  <div class="card-text">
+                  <h4 class="card-title">
+                    Truck Recieveable Amount Details
+                    </h4>
+                  </div>
+                </div>
+                <div class="card-body ">
+                <form class="form-horizontal" method="POST" action="<?php echo base_url()?>main/add_truck_closed">
+                 <div class="row">
+                  <div class="col-sm-4">
+                  <div class="form-group">
+                    <label for="allnameOfremainingamount_truck" class=""></label>
+                    <select class="selectpicker " id="allnameOfremainingamount_truck" data-style="select-with-transition" title="Choose Name" data-size="5" name="trapdid" tabindex="-98">
+                    <?php
+
+                    foreach ($get_name_of_remaining_of_sold_truck as $key) {
+                      $selected='';
+                      if($selected_person==$key->trapdid && $selected_person!=0){
+                        $selected='selected="selected"';
+                      }else{
+                        $selected='';
+                      }
+                      echo ' <option '.$selected.' value="'.$key->trapdid.'">'.$key->trapdname.'</option>';
+                    }
+
+                    ?>
+                   </select>
+                   <input type="hidden" name="tableid" value="ttruck">
+                    <span class="text-danger"><?php echo form_error('trapdid'); ?></span>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+
+                  <div class="form-group">
+                    <input type="hidden" name="trapdctruckbuysale" value="1">
+                    <label for="exampleEmail" class="bmd-label-floating ">Amount</label>
+                    <input type="text" name="trapdcamount" class="form-control stillremainingamount_of_truck_typing">
+                    <span class="text-danger"><?php echo form_error('trapdcamount'); ?></span>
+                  </div>
+                  </div>
+
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <select class="selectpicker " id="trapdctakenfrom" data-style="select-with-transition" title="Choose Cashier" data-size="5" name="trapdctakenfrom" tabindex="-98">
+                    <option value="1">Office Staff</option>
+                    <option value="2">Haji Jani</option>
+                    <option value="3">Driver</option>
+
+                   </select>
+                    <span class="text-danger"><?php echo form_error('trapdid'); ?></span>
+                  </div>
+                </div>
+               
+                 
+              </div>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label for="exampleEmail" class="">Date</label>
+                   <input type="text" name="trapdcdate" class="form-control datepicker">
+                    <span class="text-danger"><?php echo form_error('trapdcdate'); ?></span>
+                  </div>
+
+                </div>
+                
+                <div class="col-sm-2 my-3">
+                  <label class="form-check-label">
+                            <input class="form-check-input" id="trapdcndate" name="xyz" type="checkbox" value=""> Next date
+                            <span class="form-check-sign">
+                              <span class="check"></span>
+                            </span>
+                          </label>
+                </div>
+                <div class="col-sm-6 trapdcndate" style="display: none;">
+                  <div class="form-group" >
+                    <label for="exampleEmail" class="">Next Date</label>
+                   <input type="text" name="trapdcnextdate" class="form-control datepicker">
+                  </div>                  
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="exampleEmail" class="bmd-label-floating">Description</label>
+                     <textarea class="form-control" name="trapdcdescription"></textarea>
+                     <input type="hidden" name="tabletype" value="tr">
+                  </div>
+                </div>
+              </div>
+                   <div class="modal-footer justify-content-center">
+                   <?php
+                  //  $check = $this->main_model->get_truck_remaining_after_paid_amount($truckremainingview->trapdid);
+                   $check  = 0;
+
+                   $a =  $this->main_model->get_truck_remaining_after_paid_amount($truckremainingview->trapdid);
+
+                   if($a==null){
+                    $check =  $truckremainingview->trapdamount;
+                   }else{
+                    $check = $a;
+                   }
+
+                    if( $check>0){
+                   ?>
+                     <input type="submit" class="btn btn-info btn-round" name="addclose" data-dismiss="modal">
+                     <?php
+                     }else{
+                       ?>
+                        <a class="btn btn-danger btn-round" name="addclose" data-dismiss="modal">His Account is closed</a>
+                       <?php
+                     }
+                     ?>
+                     <a href="#" class="btn btn-danger btn-round">Close</a>
+                   </div>
+                </form>
+               </div>
+
+              </div>
+            </div>
+
+
+          <div class="row">
+              <div class="col-md-3">
+                <div class="card-icon">
+                  <button class="btn btn-info" onclick="print_dailyexpence()"><i class="material-icons">print</i> Print Report
+                  </button>
+                  
+                  </div>
+              </div>
+
+              <div class="col-md-9 show-error" style="display:none;">
+                <div class="alert alert-danger" role="alert">
+                  
+                  <strong>Alert!</strong> Total Remaining Amount is <span class="setremainamount "></span> You Typed <span class="settypedamount"></span>. Please Recheck
+               
+                </div>              
+              </div>
+            </div>
+
+
+
+
+
+              <div class="card " id="print_dailyexpence_page" >
+                <div class="card-header card-header-rose card-header-icon">
+                  <div class="card-icon">
+                    <i class="material-icons">map</i>
+                  </div>
+                  <h4 class="card-title">Detail of recieveable and submited amount</h4>
+                </div>
+                <div class="card-body">
+
+ 
+
+
+
+
  <?php if($pageload==1){?>
                         <table class="tripdetailtable table table-striped"  border="1" width="100%">
                           <tr>
@@ -44,22 +204,22 @@
                           
                           <tr>
                             <td colspan="2">
-                              <span  class="text-bold" >Name :  </span>
-                              <span> <?=$tripdetailremainingview->trapdname;?></span>
+                              <span  class="text-bold" >Station Name :  </span>
+                              <span> <?=$tripdetailremainingview->tstname;?></span>
                             </td>
                             <td colspan="2">
                               <span  class="text-bold" >Contact No :  </span>
-                              <span> <?=$tripdetailremainingview->trapdcontact;?></span>
+                              <span> <?=$tripdetailremainingview->tstcontact;?></span>
                             </td>
                             
                             <td colspan="2">
                               <span  class="text-bold" > Remaining Amount :  </span>
-                              <span>  <?= abs($tripdetailremainingview->trapdamount);?></span>
+                              <span>  <?=$tripdetailremainingview->tdremainingamount;?></span>
                             </td>
                              
                             <td colspan="2">
                               <span  class="text-bold" > Payable Date :  </span>
-                              <span>  <?=$tripdetailremainingview->trapddate;  ?></span>
+                              <span>  <?php echo date('Y-m-d', strtotime($tripdetailremainingview->tdcurrentdate. ' + 20 day'));  ?></span>
                             </td>
                             
                             
@@ -83,12 +243,7 @@
                             
                             
                           </tr>
-                          <tr>
-                            <td colspan="10">
-                               <span  class="text-bold" > Description :  </span>
-                              <span>  <?=$tripdetailremainingview->trapddescription;?></span>
-                            </td>
-                          </tr>
+                         
 
                           <?php 
 
@@ -116,12 +271,12 @@
                             </tr>
 
                             <?php
-                          }
-                          ?>
+                            }
+                            ?>
                       <tr>
                         <td colspan="2">Still Recieveable Amount</td>
                         <td colspan="8"><?php
-                         $a =  $this->main_model->get_dailytrip_commission_remaining_after_paid_amount($tripdetailremainingview->trapdid);
+                         $a =  $this->main_model->get_dailytrip_commission_remaining_after_paid_amount($tripdetailremainingview->tstid);
 
                          if($a==null){
                          echo  abs($tripdetailremainingview->trapdamount);
@@ -373,7 +528,7 @@
                         <table class="tripdetailtable table table-striped"  border="1" width="100%">
                           <tr>
                             <td colspan="6"><span  class="text-bold text-uppercase" >Al-Faraz Freight Service </td>
-                              <td colspan="4"><span  class="text-bold text-uppercase" > Trip Remaining Detail </td>
+                              <td colspan="4"><span  class="text-bold text-uppercase" > Truck Remaining Detail </td>
                           </tr>
                          
                           
@@ -479,11 +634,11 @@
                           ?>
                       <tr>
                         <td colspan="2">Still Recieveable Amount</td>
-                        <td colspan="8"><?php
+                        <td colspan="8" class="stillremainingamount_of_truck"><?php
                          $a =  $this->main_model->get_truck_remaining_after_paid_amount($truckremainingview->trapdid);
 
                          if($a==null){
-                         echo  abs($truckremainingview->trapdamount);
+                         echo  $truckremainingview->trapdamount;
                          }else{
                           echo $a;
                          }
@@ -493,7 +648,8 @@
                       </tr>
 
                         </table>
-  <?php } else if($pageload==5){ 
+  <?php }
+   if($pageload==5){ 
   ?>
                         <table class="tripdetailtable table table-striped"  border="1" width="100%">
                           <tr>

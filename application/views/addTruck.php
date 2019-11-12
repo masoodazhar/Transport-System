@@ -16,7 +16,7 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating">Name</label>
-                    <input type="text" value="<?php echo set_value('tname'); ?>" class="form-control" name="tname">
+                    <input type="text" value="<?php echo set_value('tname'); ?>" class="form-control " name="tname">
                     <span class="text-danger"><?php echo form_error('tname'); ?></span>
                   </div>
                 </div>
@@ -33,7 +33,7 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="exampleEmail" class="bmd-label-floating">Truck Number</label>
-                    <input type="text" value="<?php echo set_value('tnumber'); ?>" class="form-control" name="tnumber">
+                    <input type="text" value="<?php echo set_value('tnumber'); ?>" class="form-control typetruckname" name="tnumber">
                     <span class="text-danger"><?php echo form_error('tnumber'); ?></span>
                   </div>
                 </div>
@@ -104,26 +104,35 @@
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label for="exampleEmail">Insurance Date</label>
+                    <label for="exampleEmail">Insurance Expiry Date</label>
                     <input type="text" value="<?php echo set_value('tinsurancedate'); ?>" class="form-control datepicker" name="tinsurancedate">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label for="exampleEmail">Permit Date</label>
+                    <label for="exampleEmail">Permit Expiry Date</label>
                     <input type="text" value="<?php echo set_value('tpermitdate'); ?>" class="form-control datepicker" name="tpermitdate">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label for="exampleEmail">Fitness Date</label>
+                    <label for="exampleEmail">Fitness Expiry Date</label>
                     <input type="text" value="<?php echo set_value('tfitnessdate'); ?>" class="form-control datepicker" name="tfitnessdate">
                     
                   </div>
                 </div>
                 </div>
+                <div class="row">
+                 <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleEmail">Tax Expiry Date</label>
+                    <input type="text" value="<?php echo set_value('ttaxdate'); ?>" class="form-control datepicker" name="ttaxdate">
+                 </div>
+                </div>
+                </div>
                   <div class="modal-footer justify-content-center">
-                <input type="submit" class="btn btn-info btn-round" name="addtruck" data-dismiss="modal">
+                <input type="submit" class="btn btn-info btn-round tsubmitsuccess" name="addtruck" data-dismiss="modal">
+                <a class="btn btn-danger btn-round tsubmiterror" style="display:none;" href="#">This Truck with the same name is already available?</a>
                 <a class="btn btn-danger btn-round" href="<?=base_url()?>truck">Close</a>
               </div>
 
